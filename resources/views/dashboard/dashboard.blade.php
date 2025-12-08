@@ -80,7 +80,7 @@
                     <h5 class="mb-0">Kondisi Barang</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="kondisiBarangChart" height="200"></canvas>
+                    <canvas id="kondisiBarangChart" style="max-height: 200px !important;"></canvas>
                     <div class="mt-3">
                         @foreach($kondisiBarang as $kondisi)
                         <div class="d-flex justify-content-between align-items-center mb-2">
