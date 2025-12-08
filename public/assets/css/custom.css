@@ -1,0 +1,52 @@
+/* pastikan header selalu menonjol & main-panel punya padding */
+.main-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+  height: 64px;
+  background: #fff;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+/* beri jarak pada main-panel supaya content tidak ketutupan header */
+.main-panel {
+  padding-top: 74px; /* sedikit lebih dari tinggi header */
+  transition: all .25s ease;
+}
+
+/* sidebar default */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 64px; /* di bawah header */
+  bottom: 0;
+  width: 200px;
+  z-index: 1020;
+  overflow-y: auto;
+  background: #1f2937; /* contoh warna */
+}
+
+/* content di samping sidebar */
+.container-fluid .page-wrapper {
+  margin-left: 200px;
+}
+
+/* saat sidebar collapse, gunakan class .sidebar-collapsed */
+.sidebar-collapsed .sidebar {
+  transform: translateX(-220px);
+}
+
+/* responsif */
+@media (max-width: 991px) {
+  .sidebar {
+    transform: translateX(-220px);
+  }
+  .sidebar.show {
+    transform: translateX(0);
+  }
+  .container-fluid .page-wrapper {
+    margin-left: 0;
+  }
+}
