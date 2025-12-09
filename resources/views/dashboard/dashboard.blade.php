@@ -62,7 +62,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <p class="text-muted mb-1">Lokasi</p>
+                            <p class="text-muted mb-1">Ruangan</p>
                             <h3 class="mb-0">{{ $totalRuangan }}</h3>
                         </div>
                     </div>
