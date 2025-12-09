@@ -80,21 +80,59 @@
                     <h5 class="mb-0">Kondisi Barang</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="kondisiBarangChart" style="max-height: 200px !important;"></canvas>
-                    <div class="mt-3">
-                        @foreach($kondisiBarang as $kondisi)
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div class="d-flex align-items-center">
-                                <span class="badge 
-                                    @if($kondisi->kondisi == 'Baik') bg-success
-                                    @elseif($kondisi->kondisi == 'Rusak Ringan') bg-warning
-                                    @else bg-danger
-                                    @endif me-2" style="width: 12px; height: 12px;"></span>
-                                <span>{{ $kondisi->kondisi }}</span>
-                            </div>
-                            <strong>{{ $kondisi->total }}</strong>
+                    <div class="row">
+                        <div class="col-md-6 d-flex justify-content-center align-items-center">
+                            <canvas id="kondisiBarangChart" style="max-height: 250px; max-width: 250px;"></canvas>
                         </div>
-                        @endforeach
+                        <div class="col-md-6 d-flex flex-column justify-content-center">
+                            @php
+                                $totalBaik = 0;
+                                $totalRusakRingan = 0;
+                                $totalRusakBerat = 0;
+                                
+                                if(isset($kondisiBarang)) {
+                                    foreach($kondisiBarang as $kondisi) {
+                                        if($kondisi->kondisi == 'Baik') {
+                                            $totalBaik = $kondisi->total;
+                                        } elseif($kondisi->kondisi == 'Rusak Ringan') {
+                                            $totalRusakRingan = $kondisi->total;
+                                        } elseif($kondisi->kondisi == 'Rusak Berat') {
+                                            $totalRusakBerat = $kondisi->total;
+                                        }
+                                    }
+                                }
+                            @endphp
+                            
+                            <div class="mb-3 p-3" style="background-color: #f8f9fa; border-radius: 8px;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-success me-2" style="width: 20px; height: 20px;"></span>
+                                        <span style="font-weight: 500;">Kondisi Baik</span>
+                                    </div>
+                                    <strong class="text-success fs-5">{{ $totalBaik }}</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 p-3" style="background-color: #f8f9fa; border-radius: 8px;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-warning me-2" style="width: 20px; height: 20px;"></span>
+                                        <span style="font-weight: 500;">Rusak Ringan</span>
+                                    </div>
+                                    <strong class="text-warning fs-5">{{ $totalRusakRingan }}</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-0 p-3" style="background-color: #f8f9fa; border-radius: 8px;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-danger me-2" style="width: 20px; height: 20px;"></span>
+                                        <span style="font-weight: 500;">Rusak Berat</span>
+                                    </div>
+                                    <strong class="text-danger fs-5">{{ $totalRusakBerat }}</strong>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -118,7 +156,7 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-0">
-                    <h5 class="mb-0">Tren Kondisi Barang (1 Bulan Terakhir)</h5>
+                    <h5 class="mb-0">Kondisi Barang (1 Bulan Terakhir)</h5>
                 </div>
                 <div class="card-body">
                     <canvas id="trenKondisiChart" height="80"></canvas>
@@ -264,121 +302,206 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-    // Chart Kondisi Barang (Doughnut)
-    const kondisiData = @json($kondisiBarang);
-    const ctxKondisi = document.getElementById('kondisiBarangChart').getContext('2d');
-    new Chart(ctxKondisi, {
-        type: 'doughnut',
-        data: {
-            labels: kondisiData.map(k => k.kondisi),
-            datasets: [{
-                data: kondisiData.map(k => k.total),
-                backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            }
-        }
-    });
-
-    // Chart Distribusi Kategori (Bar)
-    const kategoriData = @json($distribusiKategori);
-    const ctxKategori = document.getElementById('kategoriChart').getContext('2d');
-    new Chart(ctxKategori, {
-        type: 'bar',
-        data: {
-            labels: kategoriData.map(k => k.nama_kategori),
-            datasets: [{
-                label: 'Jumlah Barang',
-                data: kategoriData.map(k => k.total),
-                backgroundColor: '#3b82f6',
-                borderRadius: 5
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0
-                    }
-                }
-            }
-        }
-    });
-
-    // Chart Tren Kondisi (Line)
-    const trenData = @json($kondisiPerBulan);
+    // Chart Kondisi Barang (Doughnut) dengan warna yang sesuai
+    const kondisiDataRaw = @json($kondisiBarang ?? []);
+    console.log('Data Kondisi:', kondisiDataRaw); // Debug
     
-    // Group data by kondisi
-    const groupedData = {};
-    trenData.forEach(item => {
-        if (!groupedData[item.kondisi]) {
-            groupedData[item.kondisi] = [];
+    const ctxKondisi = document.getElementById('kondisiBarangChart').getContext('2d');
+    
+    // Jika tidak ada data dari controller, ambil dari database langsung
+    let labels = [];
+    let sortedData = [];
+    let colors = [];
+    
+    if (kondisiDataRaw && kondisiDataRaw.length > 0) {
+        // Data dari controller
+        const baik = kondisiDataRaw.find(k => k.kondisi === 'Baik');
+        const rusakRingan = kondisiDataRaw.find(k => k.kondisi === 'Rusak Ringan');
+        const rusakBerat = kondisiDataRaw.find(k => k.kondisi === 'Rusak Berat');
+        
+        if (baik && baik.total > 0) {
+            labels.push('Baik');
+            sortedData.push(baik.total);
+            colors.push('#28a745');
         }
-        groupedData[item.kondisi].push({
-            x: item.tanggal,
-            y: item.total
-        });
-    });
-
-    const datasets = Object.keys(groupedData).map(kondisi => {
-        let color;
-        if (kondisi === 'Baik') color = '#28a745';
-        else if (kondisi === 'Rusak Ringan') color = '#ffc107';
-        else color = '#dc3545';
-
-        return {
-            label: kondisi,
-            data: groupedData[kondisi],
-            borderColor: color,
-            backgroundColor: color + '20',
-            tension: 0.4,
-            fill: true
-        };
-    });
-
-    const ctxTren = document.getElementById('trenKondisiChart').getContext('2d');
-    new Chart(ctxTren, {
-        type: 'line',
-        data: {
-            datasets: datasets
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'day',
-                        displayFormats: {
-                            day: 'DD MMM'
+        
+        if (rusakRingan && rusakRingan.total > 0) {
+            labels.push('Rusak Ringan');
+            sortedData.push(rusakRingan.total);
+            colors.push('#ffc107');
+        }
+        
+        if (rusakBerat && rusakBerat.total > 0) {
+            labels.push('Rusak Berat');
+            sortedData.push(rusakBerat.total);
+            colors.push('#dc3545');
+        }
+    }
+    
+    // Jika masih tidak ada data, gunakan nilai default dari total yang ditampilkan
+    if (sortedData.length === 0) {
+        const totalBaik = {{ $totalBaik ?? 0 }};
+        const totalRusakRingan = {{ $totalRusakRingan ?? 0 }};
+        const totalRusakBerat = {{ $totalRusakBerat ?? 0 }};
+        
+        if (totalBaik > 0) {
+            labels.push('Baik');
+            sortedData.push(totalBaik);
+            colors.push('#28a745');
+        }
+        if (totalRusakRingan > 0) {
+            labels.push('Rusak Ringan');
+            sortedData.push(totalRusakRingan);
+            colors.push('#ffc107');
+        }
+        if (totalRusakBerat > 0) {
+            labels.push('Rusak Berat');
+            sortedData.push(totalRusakBerat);
+            colors.push('#dc3545');
+        }
+    }
+    
+    console.log('Labels:', labels); // Debug
+    console.log('Data:', sortedData); // Debug
+    console.log('Colors:', colors); // Debug
+    
+    if (sortedData.length > 0) {
+        new Chart(ctxKondisi, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: sortedData,
+                    backgroundColor: colors,
+                    borderWidth: 3,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return label + ': ' + value + ' (' + percentage + '%)';
+                            }
                         }
                     }
+                }
+            }
+        });
+    } else {
+        // Tampilkan pesan jika tidak ada data
+        const canvas = document.getElementById('kondisiBarangChart');
+        canvas.style.display = 'none';
+        const container = canvas.parentElement;
+        container.innerHTML += '<p class="text-center text-muted">Belum ada data kondisi barang</p>';
+    }
+
+    // Chart Distribusi Kategori (Bar)
+    const kategoriData = @json($distribusiKategori ?? []);
+    const ctxKategori = document.getElementById('kategoriChart').getContext('2d');
+    
+    if (kategoriData && kategoriData.length > 0) {
+        new Chart(ctxKategori, {
+            type: 'bar',
+            data: {
+                labels: kategoriData.map(k => k.nama_kategori),
+                datasets: [{
+                    label: 'Jumlah Barang',
+                    data: kategoriData.map(k => k.total),
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
                 },
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }
+
+    // Chart Tren Kondisi (Line)
+    const trenData = @json($kondisiPerBulan ?? []);
+    
+    if (trenData && trenData.length > 0) {
+        // Group data by kondisi
+        const groupedData = {};
+        trenData.forEach(item => {
+            if (!groupedData[item.kondisi]) {
+                groupedData[item.kondisi] = [];
+            }
+            groupedData[item.kondisi].push({
+                x: item.tanggal,
+                y: item.total
+            });
+        });
+
+        const datasets = Object.keys(groupedData).map(kondisi => {
+            let color;
+            if (kondisi === 'Baik') color = '#28a745';
+            else if (kondisi === 'Rusak Ringan') color = '#ffc107';
+            else color = '#dc3545';
+
+            return {
+                label: kondisi,
+                data: groupedData[kondisi],
+                borderColor: color,
+                backgroundColor: color + '20',
+                tension: 0.4,
+                fill: true
+            };
+        });
+
+        const ctxTren = document.getElementById('trenKondisiChart').getContext('2d');
+        new Chart(ctxTren, {
+            type: 'line',
+            data: {
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day',
+                            displayFormats: {
+                                day: 'DD MMM'
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    }
 </script>
 @endpush
