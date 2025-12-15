@@ -6,9 +6,7 @@
             <h2 class="mb-1">📦 Daftar Barang</h2>
             <p class="text-muted">Kelola semua barang inventaris</p>
         </div>
-        <a href="{{ route('barang.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Tambah Barang
-        </a>
+       
     </div>
 
     @if(session('success'))

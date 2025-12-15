@@ -217,8 +217,8 @@
 <body>
   <div class="login-container">
     <div class="login-card">
-      <h1 class="login-title">Monitoring Barang</h1>
-      <p class="login-subtitle">Silahkan masuk dengan akun dmin</p>
+      <h1 class="login-title">Inventaris Barang</h1>
+      <p class="login-subtitle">Ditjen Cipta Karya</p>
       
    <form method="POST" action="/login">
   @csrf

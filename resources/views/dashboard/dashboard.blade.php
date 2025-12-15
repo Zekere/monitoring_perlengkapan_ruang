@@ -9,9 +9,6 @@
             <h4 class="mb-1">Selamat Datang, {{ Auth::user()->name ?? 'Administrator' }}</h4>
             <p class="text-muted">{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM YYYY') }}</p>
         </div>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahBarang">
-            <i class="bi bi-plus-circle"></i> Tambah Barang
-        </button>
     </div>
 
     <!-- Cards Statistik -->

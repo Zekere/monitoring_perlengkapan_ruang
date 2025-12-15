@@ -30,10 +30,31 @@
                 </a>
                 <div class="collapse nav-collapse {{ Request::is('barang*', 'kategori*', 'lokasi*') ? 'show' : '' }}" id="masterMenu">
                     <ul>
-                        <li><a href="{{ url('/barang') }}" class="{{ Request::is('barang*') ? 'active' : '' }}"><span class="sub-item">Barang</span></a></li>
-                        <li><a href="{{ url('/kategori') }}" class="{{ Request::is('kategori*') ? 'active' : '' }}"><span class="sub-item">Kategori</span></a></li>
-                        <li><a href="{{ url('/lokasi') }}" class="{{ Request::is('lokasi*') ? 'active' : '' }}"><span class="sub-item">Lokasi</span></a></li>
-                    </ul>
+    <li>
+        <a href="{{ url('/barang') }}" class="{{ Request::is('barang') ? 'active' : '' }}">
+            <span class="sub-item">Barang</span>
+        </a>
+    </li>
+
+    <li>
+        <a href="{{ route('barang.create') }}" class="{{ Request::is('barang/create') ? 'active' : '' }}">
+            <span class="sub-item">Tambah Barang</span>
+        </a>
+    </li>
+
+    <li>
+        <a href="{{ url('/kategori') }}" class="{{ Request::is('kategori*') ? 'active' : '' }}">
+            <span class="sub-item">Kategori</span>
+        </a>
+    </li>
+
+    <li>
+        <a href="{{ url('/lokasi') }}" class="{{ Request::is('lokasi*') ? 'active' : '' }}">
+            <span class="sub-item">Lokasi</span>
+        </a>
+    </li>
+</ul>
+
                 </div>
             </li>
         </ul>
