@@ -9,6 +9,8 @@
        
     </div>
 
+    
+
     @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ session('success') }}
@@ -105,8 +107,15 @@
                     <button class="btn btn-secondary" id="resetBtn">
                         <i class="fas fa-redo"></i> Reset
                     </button>
+
+                    <!-- Tombol Tambah Barang -->
+                    <a href="{{ route('barang.create') }}" class="btn btn-primary ms-2">
+                        <i class="fas fa-plus"></i> Tambah Barang
+                    </a>
                 </div>
             </div>
+
+            
 
             <div class="table-responsive">
                 <table class="table table-hover">

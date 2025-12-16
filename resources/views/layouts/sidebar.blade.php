@@ -49,8 +49,8 @@
     </li>
 
     <li>
-        <a href="{{ url('/lokasi') }}" class="{{ Request::is('lokasi*') ? 'active' : '' }}">
-            <span class="sub-item">Lokasi</span>
+        <a href="{{ url('/ruangan') }}" class="{{ Request::is('ruangan*') ? 'active' : '' }}">
+            <span class="sub-item">Ruangan</span>
         </a>
     </li>
 </ul>
