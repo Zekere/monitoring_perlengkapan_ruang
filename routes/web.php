@@ -7,6 +7,7 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\PengecekanController;
+use App\Http\Controllers\BarangFilterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,4 +80,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/barang', 
         [BarangController::class, 'laporan']
     )->name('laporan.barang');
+
+    // Fitur Filter  (optional)
+    Route::get('/barang', [BarangFilterController::class, 'index'])
+     ->name('barang.index');
+
 });

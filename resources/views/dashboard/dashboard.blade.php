@@ -148,20 +148,7 @@
         </div>
     </div>
 
-    <!-- Tren Kondisi 1 Bulan -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0">Kondisi Barang (1 Bulan Terakhir)</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="trenKondisiChart" height="80"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
+   
     <!-- Tables -->
     <div class="row">
         <!-- Barang Terbaru -->
