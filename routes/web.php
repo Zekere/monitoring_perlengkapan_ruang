@@ -8,6 +8,7 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\PengecekanController;
 use App\Http\Controllers\BarangFilterController;
+use App\Http\Controllers\RuanganController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +43,9 @@ Route::middleware('auth')->group(function () {
     // Barang (CRUD lengkap dengan resource route)
     Route::resource('barang', BarangController::class);
     Route::get('barang/export/pdf', [BarangController::class, 'exportPdf'])->name('barang.export-pdf');
+
+    Route::get('/barang/create', [BarangController::class, 'create'])->name('barang.create');
+    Route::post('/barang', [BarangController::class, 'store'])->name('barang.store');
     
     // Kategori (CRUD lengkap)
     // Route::resource('kategori', KategoriController::class);
@@ -81,8 +85,33 @@ Route::middleware('auth')->group(function () {
         [BarangController::class, 'laporan']
     )->name('laporan.barang');
 
+
     // Fitur Filter  (optional)
     Route::get('/barang', [BarangFilterController::class, 'index'])
      ->name('barang.index');
+
+
+    /*ruangannnnnnnnn*/
+   //Route::resource('ruangan', RuanganController::class);
+ // Menampilkan daftar ruangan
+Route::get('/ruangan', [RuanganController::class, 'index'])->name('ruangan.index');
+
+// Menampilkan form untuk menambah ruangan
+Route::get('/ruangan/create', [RuanganController::class, 'create'])->name('ruangan.create');
+
+// Menyimpan data ruangan baru
+Route::post('/ruangan', [RuanganController::class, 'store'])->name('ruangan.store');
+
+// Menampilkan form untuk mengedit ruangan
+Route::get('/ruangan/{id}/edit', [RuanganController::class, 'edit'])->name('ruangan.edit');
+
+// Mengupdate data ruangan
+Route::put('/ruangan/{id}', [RuanganController::class, 'update'])->name('ruangan.update');
+
+// Menghapus data ruangan
+Route::delete('/ruangan/{id}', [RuanganController::class, 'destroy'])->name('ruangan.destroy');
+
+
+
 
 });

@@ -1,10 +1,22 @@
 @extends('layouts.template')
 
 @section('content')
-<div class="container-fluid px-4">
-    <h1 class="mt-4 mb-4">Data Barang</h1>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">📦 Daftar Barang</h2>
+            <p class="text-muted">Kelola semua barang inventaris</p>
+        </div>
+       
+    </div>
 
-    <!-- Card Statistik -->
+    @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    @endif
+
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="card shadow-sm">
@@ -105,9 +117,9 @@
                     </button>
                     <a href="{{ route('barang.index') }}" class="btn btn-secondary">
                         <i class="fas fa-redo"></i> Reset
-                    </a>
+                    </button>
                 </div>
-            </form>
+            </div>
 
             <!-- Tabel Data -->
             <div class="table-responsive">
