@@ -54,6 +54,14 @@
         </a>
     </li>
 </ul>
+<li class="nav-item mt-3">
+    <a href="{{ route('logout') }}"
+       class="nav-link text-danger"
+       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        <i class="fas fa-sign-out-alt"></i>
+        <p>Logout</p>
+    </a>
+</li>
 
                 </div>
             </li>

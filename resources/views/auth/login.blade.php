@@ -212,6 +212,17 @@
         font-size: 13px;
       }
     }
+
+    .btn-pengaduan {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  margin-top: 14px;
+  box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+}
+
+.btn-pengaduan:hover {
+  box-shadow: 0 8px 25px rgba(108, 117, 125, 0.5);
+}
+
   </style>
 </head>
 <body>
@@ -234,6 +245,14 @@
   </div>
 
   <button class="btn-login" type="submit">Login</button>
+
+<a href="{{ route('pengaduan.create') }}" 
+   class="btn-login btn-pengaduan" 
+   style="text-decoration: none; display: inline-block;">
+  🛠️ Pengaduan Kerusakan Inventaris
+</a>
+
+
 
   {{-- ✅ ERROR LOGIN YANG BENAR --}}
   @if ($errors->any())

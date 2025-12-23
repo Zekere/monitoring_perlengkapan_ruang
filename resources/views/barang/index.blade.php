@@ -4,8 +4,10 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="mb-1">📦 Daftar Barang</h2>
-            <p class="text-muted">Kelola semua barang inventaris</p>
+            <h2 class="fw-bold mb-1">
+            <i class="fas fa-box-open text-primary me-1"></i>
+            Daftar Barang</h2>
+            <p class="text-muted mb-0">Kelola seluruh data inventaris barang</p>
         </div>
        
     </div>
@@ -79,62 +81,71 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <!-- Form Filter -->
-            <form method="GET" action="{{ route('barang.index') }}" class="row mb-3">
-                <div class="col-md-3">
-                    <input type="text" name="search" class="form-control" placeholder="Cari barang..." value="{{ request('search') }}">
-                </div>
-                <div class="col-md-2">
-                    <select name="kategori" id="kategoriFilter" class="form-select">
-                        <option value="">Semua Kategori</option>
-                        @foreach($kategori as $kat)
-                            <option value="{{ $kat->id_kategori }}" {{ request('kategori') == $kat->id_kategori ? 'selected' : '' }}>
-                                {{ $kat->nama_kategori }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <select name="ruangan" id="lokasiFilter" class="form-select">
-                        <option value="">Semua Ruangan</option>
-                        @foreach($ruangan as $ruang)
-                            <option value="{{ $ruang->id_ruangan }}" {{ request('ruangan') == $ruang->id_ruangan ? 'selected' : '' }}>
-                                {{ $ruang->nama_ruangan }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <select name="kondisi" id="kondisiFilter" class="form-select">
-                        <option value="">Semua Kondisi</option>
-                        <option value="Baik" {{ request('kondisi') == 'Baik' ? 'selected' : '' }}>Baik</option>
-                        <option value="Rusak Ringan" {{ request('kondisi') == 'Rusak Ringan' ? 'selected' : '' }}>Rusak Ringan</option>
-                        <option value="Rusak Berat" {{ request('kondisi') == 'Rusak Berat' ? 'selected' : '' }}>Rusak Berat</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i> Cari
-                    </button>
-                    <a href="{{ route('barang.index') }}" class="btn btn-secondary">
-                        <i class="fas fa-redo"></i> Reset
-                    </button>
-                </div>
-            </div>
+            <form method="GET" action="{{ route('barang.index') }}" class="row g-2 mb-3 align-items-center">
+    <div class="col-md-3">
+        <input type="text" name="search" class="form-control form-control-sm"
+               placeholder="🔍 Cari barang..."
+               value="{{ request('search') }}">
+    </div>
+
+    <div class="col-md-2">
+        <select name="kategori" class="form-select form-select-sm">
+            <option value="">🏷️ Semua Kategori</option>
+            @foreach($kategori as $kat)
+                <option value="{{ $kat->id_kategori }}" {{ request('kategori') == $kat->id_kategori ? 'selected' : '' }}>
+                    {{ $kat->nama_kategori }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <select name="ruangan" class="form-select form-select-sm">
+            <option value="">📍 Semua Ruangan</option>
+            @foreach($ruangan as $ruang)
+                <option value="{{ $ruang->id_ruangan }}" {{ request('ruangan') == $ruang->id_ruangan ? 'selected' : '' }}>
+                    {{ $ruang->nama_ruangan }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <select name="kondisi" class="form-select form-select-sm">
+            <option value="">⚙️ Semua Kondisi</option>
+            <option value="Baik" {{ request('kondisi') == 'Baik' ? 'selected' : '' }}>Baik</option>
+            <option value="Rusak Ringan" {{ request('kondisi') == 'Rusak Ringan' ? 'selected' : '' }}>Rusak Ringan</option>
+            <option value="Rusak Berat" {{ request('kondisi') == 'Rusak Berat' ? 'selected' : '' }}>Rusak Berat</option>
+        </select>
+    </div>
+
+    <div class="col-md-3 text-end">
+        <button class="btn btn-primary btn-sm">
+            <i class="fas fa-search"></i> Cari
+        </button>
+        <a href="{{ route('barang.index') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-rotate"></i> Reset
+        </a>
+    </div>
+</form>
+
 
             <!-- Tabel Data -->
             <div class="table-responsive">
                 <table class="table table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th style="color: #000;">No</th>
-                            <th style="color: #000;">Kode</th>
-                            <th style="color: #000;">Nama Barang</th>
-                            <th style="color: #000;">Kategori</th>
-                            <th style="color: #000;">Ruangan</th>
-                            <th style="color: #000;">Kondisi</th>
-                            <th style="color: #000;">Aksi</th>
-                        </tr>
-                    </thead>
+                    <table class="table table-hover align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>No</th>
+            <th>Kode</th>
+            <th>Barang</th>
+            <th>Kategori</th>
+            <th>Ruangan</th>
+            <th class="text-center">Kondisi</th>
+            <th class="text-center">Aksi</th>
+        </tr>
+    </thead>
+  
                     <tbody>
                         @forelse($barang as $index => $item)
                             <tr>
@@ -167,17 +178,21 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <button class="btn btn-sm btn-info" title="Lihat Detail">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-warning" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" title="Hapus">
+                                     <a href="{{ route('barang.edit', $item) }}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                           <form action="{{ route('barang.destroy', $item->id_item) }}"
+                                      method="POST"
+                                      class="d-inline"
+                                      onsubmit="return confirm('Yakin ingin menghapus?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-sm btn-danger">
                                         <i class="fas fa-trash"></i>
                                     </button>
-                                </td>
-                            </tr>
+                                </form>
+                            </td>
+                        </tr>
                         @empty
                             <tr>
                                 <td colspan="7" class="text-center py-4">

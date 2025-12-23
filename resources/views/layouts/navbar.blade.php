@@ -41,13 +41,15 @@
                     <div class="dropdown-divider"></div>
                     
                     <!-- Form Logout -->
-                    <form id="logoutForm" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                    
-                    <a class="dropdown-item" href="#" id="logoutBtn" 
-                       onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">
-                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                 @csrf
+                y</form>
+
+<a href="#" class="dropdown-item"
+   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+    <i class="fas fa-sign-out-alt me-2"></i> Logout
+</a>
+
                     </a>
                 </div>
             </div>

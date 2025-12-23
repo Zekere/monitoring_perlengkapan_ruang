@@ -9,6 +9,8 @@ use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\PengecekanController;
 use App\Http\Controllers\BarangFilterController;
 use App\Http\Controllers\RuanganController;
+use App\Http\Controllers\PengaduanController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -41,11 +43,18 @@ Route::middleware('auth')->group(function () {
     */
     
     // Barang (CRUD lengkap dengan resource route)
-    Route::resource('barang', BarangController::class);
-    Route::get('barang/export/pdf', [BarangController::class, 'exportPdf'])->name('barang.export-pdf');
+ // BARANG
+Route::get('/barang', [BarangFilterController::class, 'index'])->name('barang.index');
+Route::get('/barang/create', [BarangController::class, 'create'])->name('barang.create');
+Route::post('/barang', [BarangController::class, 'store'])->name('barang.store');
+Route::get('/barang/{id}/edit', [BarangController::class, 'edit'])->name('barang.edit');
+Route::put('/barang/{id}', [BarangController::class, 'update'])->name('barang.update');
+Route::delete('/barang/{id}', [BarangController::class, 'destroy'])->name('barang.destroy');
 
-    Route::get('/barang/create', [BarangController::class, 'create'])->name('barang.create');
-    Route::post('/barang', [BarangController::class, 'store'])->name('barang.store');
+Route::get('barang/export/pdf', [BarangController::class, 'exportPdf'])
+    ->name('barang.export-pdf');
+
+
     
     // Kategori (CRUD lengkap)
     // Route::resource('kategori', KategoriController::class);
@@ -110,8 +119,10 @@ Route::put('/ruangan/{id}', [RuanganController::class, 'update'])->name('ruangan
 
 // Menghapus data ruangan
 Route::delete('/ruangan/{id}', [RuanganController::class, 'destroy'])->name('ruangan.destroy');
-
-
-
-
+/// form pengaduan (BOLEH TANPA LOGIN)
+// Route untuk pengaduan (TANPA LOGIN)
+Route::get('/pengaduan/create', [PengaduanController::class, 'create'])
+    ->name('pengaduan.create');
+Route::post('/pengaduan/store', [PengaduanController::class, 'store'])
+    ->name('pengaduan.store');
 });

@@ -137,18 +137,21 @@ class BarangController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Item $barang)
-    {
-        // Delete photo if exists
-        if ($barang->foto && Storage::disk('public')->exists($barang->foto)) {
-            Storage::disk('public')->delete($barang->foto);
-        }
+    public function destroy($id)
+{
+    $barang = Item::findOrFail($id);
 
-        $barang->delete();
-
-        return redirect()->route('barang.index')
-            ->with('success', 'Barang berhasil dihapus');
+    // Hapus foto jika ada
+    if ($barang->foto && Storage::disk('public')->exists($barang->foto)) {
+        Storage::disk('public')->delete($barang->foto);
     }
+
+    // Hapus data barang
+    $barang->delete();
+
+    return redirect()->route('barang.index')
+        ->with('success', 'Barang berhasil dihapus');
+}
 
     /**
      * Export to PDF
