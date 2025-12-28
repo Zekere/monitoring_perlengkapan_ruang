@@ -2,22 +2,26 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PengaduanKerusakan extends Model
 {
-    use HasFactory;
-
     protected $table = 'pengaduan_kerusakan';
-
+    protected $primaryKey = 'id_pengaduan';
+    
     protected $fillable = [
         'nama_pelapor',
         'email_pelapor',
-        'barang_id',
+        'id_item',
         'tingkat_kerusakan',
         'deskripsi',
-        'status',
-        'foto'
+        'foto',
+        'status'
     ];
+
+    // Relasi ke tabel items
+    public function item()
+    {
+        return $this->belongsTo(Item::class, 'id_item', 'id_item');
+    }
 }

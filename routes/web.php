@@ -11,7 +11,6 @@ use App\Http\Controllers\BarangFilterController;
 use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\PengaduanController;
 
-
 /*
 |--------------------------------------------------------------------------
 | Guest Routes (Tidak perlu login)
@@ -21,6 +20,16 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
 });
+
+/*
+|--------------------------------------------------------------------------
+| PUBLIC Routes - Pengaduan (TANPA LOGIN)
+|--------------------------------------------------------------------------
+*/
+Route::get('/pengaduan/create', [PengaduanController::class, 'create'])
+    ->name('pengaduan.create');
+Route::post('/pengaduan/store', [PengaduanController::class, 'store'])
+    ->name('pengaduan.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -42,27 +51,15 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     
-    // Barang (CRUD lengkap dengan resource route)
- // BARANG
-Route::get('/barang', [BarangFilterController::class, 'index'])->name('barang.index');
-Route::get('/barang/create', [BarangController::class, 'create'])->name('barang.create');
-Route::post('/barang', [BarangController::class, 'store'])->name('barang.store');
-Route::get('/barang/{id}/edit', [BarangController::class, 'edit'])->name('barang.edit');
-Route::put('/barang/{id}', [BarangController::class, 'update'])->name('barang.update');
-Route::delete('/barang/{id}', [BarangController::class, 'destroy'])->name('barang.destroy');
-
-Route::get('barang/export/pdf', [BarangController::class, 'exportPdf'])
-    ->name('barang.export-pdf');
-
-
-    
-    // Kategori (CRUD lengkap)
-    // Route::resource('kategori', KategoriController::class);
-    
-    // // Lokasi/Ruangan (CRUD lengkap)
-    // Route::resource('lokasi', LokasiController::class);
-    // atau jika nama controller Anda RuanganController:
-    // Route::resource('lokasi', RuanganController::class);
+    // BARANG
+    Route::get('/barang', [BarangFilterController::class, 'index'])->name('barang.index');
+    Route::get('/barang/create', [BarangController::class, 'create'])->name('barang.create');
+    Route::post('/barang', [BarangController::class, 'store'])->name('barang.store');
+    Route::get('/barang/{id}/edit', [BarangController::class, 'edit'])->name('barang.edit');
+    Route::put('/barang/{id}', [BarangController::class, 'update'])->name('barang.update');
+    Route::delete('/barang/{id}', [BarangController::class, 'destroy'])->name('barang.destroy');
+    Route::get('barang/export/pdf', [BarangController::class, 'exportPdf'])
+        ->name('barang.export-pdf');
     
     /*
     |--------------------------------------------------------------------------
@@ -94,35 +91,29 @@ Route::get('barang/export/pdf', [BarangController::class, 'exportPdf'])
         [BarangController::class, 'laporan']
     )->name('laporan.barang');
 
-
     // Fitur Filter  (optional)
     Route::get('/barang', [BarangFilterController::class, 'index'])
      ->name('barang.index');
 
-
-    /*ruangannnnnnnnn*/
-   //Route::resource('ruangan', RuanganController::class);
- // Menampilkan daftar ruangan
-Route::get('/ruangan', [RuanganController::class, 'index'])->name('ruangan.index');
-
-// Menampilkan form untuk menambah ruangan
-Route::get('/ruangan/create', [RuanganController::class, 'create'])->name('ruangan.create');
-
-// Menyimpan data ruangan baru
-Route::post('/ruangan', [RuanganController::class, 'store'])->name('ruangan.store');
-
-// Menampilkan form untuk mengedit ruangan
-Route::get('/ruangan/{id}/edit', [RuanganController::class, 'edit'])->name('ruangan.edit');
-
-// Mengupdate data ruangan
-Route::put('/ruangan/{id}', [RuanganController::class, 'update'])->name('ruangan.update');
-
-// Menghapus data ruangan
-Route::delete('/ruangan/{id}', [RuanganController::class, 'destroy'])->name('ruangan.destroy');
-/// form pengaduan (BOLEH TANPA LOGIN)
-// Route untuk pengaduan (TANPA LOGIN)
-Route::get('/pengaduan/create', [PengaduanController::class, 'create'])
-    ->name('pengaduan.create');
-Route::post('/pengaduan/store', [PengaduanController::class, 'store'])
-    ->name('pengaduan.store');
+    /*
+    |--------------------------------------------------------------------------
+    | RUANGAN Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/ruangan', [RuanganController::class, 'index'])->name('ruangan.index');
+    Route::get('/ruangan/create', [RuanganController::class, 'create'])->name('ruangan.create');
+    Route::post('/ruangan', [RuanganController::class, 'store'])->name('ruangan.store');
+    Route::get('/ruangan/{id}/edit', [RuanganController::class, 'edit'])->name('ruangan.edit');
+    Route::put('/ruangan/{id}', [RuanganController::class, 'update'])->name('ruangan.update');
+    Route::delete('/ruangan/{id}', [RuanganController::class, 'destroy'])->name('ruangan.destroy');
+    
+    /*
+    |--------------------------------------------------------------------------
+    | PENGADUAN Management (Hanya untuk Admin/Staff yang login)
+    |--------------------------------------------------------------------------
+    */
+    // Route untuk melihat daftar pengaduan (hanya admin)
+    Route::get('/pengaduan', [PengaduanController::class, 'index'])->name('pengaduan.index');
+    Route::get('/pengaduan/{id}', [PengaduanController::class, 'show'])->name('pengaduan.show');
+    Route::put('/pengaduan/{id}/status', [PengaduanController::class, 'updateStatus'])->name('pengaduan.updateStatus');
 });
