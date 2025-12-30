@@ -6,20 +6,6 @@
     <div class="page-header mb-4">
         <h3 class="fw-bold mb-3">✨ Tambah Barang Baru</h3>
         <ul class="breadcrumbs mb-0">
-            <li class="nav-home">
-                <a href="{{ route('dashboard') }}">
-                    <i class="flaticon-home"></i>
-                </a>
-            </li>
-            <li class="separator">
-                <i class="flaticon-right-arrow"></i>
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('barang.index') }}">Barang</a>
-            </li>
-            <li class="separator">
-                <i class="flaticon-right-arrow"></i>
-            </li>
             <li class="nav-item active">
                 Tambah Barang
             </li>
@@ -180,14 +166,22 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="btn btn-outline-primary btn-round btn-sm mb-2">
-                                            <i class="fa fa-upload mr-1"></i> Pilih Foto
-                                            <input type="file" 
-                                                   name="foto" 
-                                                   accept="image/*"
-                                                   onchange="previewImage(event)"
-                                                   style="display: none;">
-                                        </label>
+                                        <div class="btn-group d-flex mb-2" role="group">
+                                            <label class="btn btn-outline-primary btn-sm flex-fill">
+                                                <i class="fa fa-upload mr-1"></i> Upload File
+                                                <input type="file" 
+                                                       id="fileInput"
+                                                       name="foto" 
+                                                       accept="image/*"
+                                                       onchange="previewImage(event)"
+                                                       style="display: none;">
+                                            </label>
+                                            <button type="button" 
+                                                    class="btn btn-outline-success btn-sm flex-fill"
+                                                    onclick="openWebcam()">
+                                                <i class="fa fa-camera mr-1"></i> Buka Webcam
+                                            </button>
+                                        </div>
                                         @error('foto')
                                         <div class="text-danger small">{{ $message }}</div>
                                         @enderror
@@ -197,6 +191,33 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
+                                    <!-- Webcam Container -->
+                                    <div id="webcamContainer" style="display: none;">
+                                        <div class="card">
+                                            <div class="card-body text-center p-2">
+                                                <p class="mb-2 font-weight-bold">Webcam:</p>
+                                                <video id="webcam" 
+                                                       autoplay 
+                                                       playsinline
+                                                       class="img-thumbnail"
+                                                       style="max-width: 100%; max-height: 250px;">
+                                                </video>
+                                                <div class="mt-2">
+                                                    <button type="button" 
+                                                            class="btn btn-success btn-sm"
+                                                            onclick="capturePhoto()">
+                                                        <i class="fa fa-camera mr-1"></i> Ambil Foto
+                                                    </button>
+                                                    <button type="button" 
+                                                            class="btn btn-danger btn-sm"
+                                                            onclick="closeWebcam()">
+                                                        <i class="fa fa-times mr-1"></i> Tutup
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
                                     <!-- Image Preview -->
                                     <div id="imagePreview" style="display: none;">
                                         <div class="card">
@@ -207,9 +228,19 @@
                                                      alt="Preview" 
                                                      class="img-thumbnail shadow-sm"
                                                      style="max-width: 250px; max-height: 250px; object-fit: cover;">
+                                                <div class="mt-2">
+                                                    <button type="button" 
+                                                            class="btn btn-warning btn-sm"
+                                                            onclick="removePhoto()">
+                                                        <i class="fa fa-trash mr-1"></i> Hapus Foto
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                    <!-- Hidden canvas for capturing -->
+                                    <canvas id="canvas" style="display: none;"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -276,26 +307,121 @@
     outline: none;
     box-shadow: none;
 }
+#webcam {
+    transform: scaleX(-1);
+}
 </style>
 @endpush
 
 @push('scripts')
 <script>
+let stream = null;
+let capturedBlob = null;
+
+// Preview image from file input
 function previewImage(event) {
-    var reader = new FileReader();
-    reader.onload = function(){
-        var output = document.getElementById('preview');
-        output.src = reader.result;
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(){
+            document.getElementById('preview').src = reader.result;
+            document.getElementById('imagePreview').style.display = 'block';
+            document.getElementById('webcamContainer').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+        capturedBlob = null;
+    }
+}
+
+// Open webcam
+async function openWebcam() {
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { 
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            } 
+        });
+        
+        const video = document.getElementById('webcam');
+        video.srcObject = stream;
+        
+        document.getElementById('webcamContainer').style.display = 'block';
+        document.getElementById('imagePreview').style.display = 'none';
+    } catch (err) {
+        alert('Tidak dapat mengakses webcam. Pastikan Anda memberikan izin akses kamera.');
+        console.error('Error accessing webcam:', err);
+    }
+}
+
+// Close webcam
+function closeWebcam() {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+    document.getElementById('webcamContainer').style.display = 'none';
+}
+
+// Capture photo from webcam
+function capturePhoto() {
+    const video = document.getElementById('webcam');
+    const canvas = document.getElementById('canvas');
+    const preview = document.getElementById('preview');
+    
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    
+    const ctx = canvas.getContext('2d');
+    // Flip horizontally to match what user sees
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0);
+    
+    // Convert canvas to blob
+    canvas.toBlob(function(blob) {
+        capturedBlob = blob;
+        
+        // Show preview
+        const url = URL.createObjectURL(blob);
+        preview.src = url;
+        
+        // Create a new File object from the blob
+        const file = new File([blob], 'webcam-photo.jpg', { type: 'image/jpeg' });
+        
+        // Create a DataTransfer to set the file input
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        document.getElementById('fileInput').files = dataTransfer.files;
+        
+        // Show preview and hide webcam
         document.getElementById('imagePreview').style.display = 'block';
-    };
-    reader.readAsDataURL(event.target.files[0]);
+        closeWebcam();
+    }, 'image/jpeg', 0.9);
+}
+
+// Remove photo
+function removePhoto() {
+    document.getElementById('preview').src = '';
+    document.getElementById('imagePreview').style.display = 'none';
+    document.getElementById('fileInput').value = '';
+    capturedBlob = null;
 }
 
 // Form validation enhancement
 $(document).ready(function() {
     $('#formBarang').on('submit', function() {
-        $(this).find('button[type="submit"]').prop('disabled', true).html('<i class="fa fa-spinner fa-spin mr-1"></i> Menyimpan...');
+        // Close webcam if still open
+        closeWebcam();
+        
+        $(this).find('button[type="submit"]').prop('disabled', true)
+            .html('<i class="fa fa-spinner fa-spin mr-1"></i> Menyimpan...');
     });
+});
+
+// Clean up webcam on page unload
+window.addEventListener('beforeunload', function() {
+    closeWebcam();
 });
 </script>
 @endpush
