@@ -157,6 +157,9 @@
                 <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Barang Terbaru</h5>
                     <a href="{{ route('barang.index') }}" class="btn btn-sm btn-outline-primary">Lihat Semua</a>
+                     <a href="{{ route('export.barang') }}" class="btn btn-danger" target="_blank">
+            <i class="fas fa-file-pdf"></i> Export PDF
+        </a>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">

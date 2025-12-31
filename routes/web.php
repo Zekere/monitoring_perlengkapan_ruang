@@ -10,6 +10,7 @@ use App\Http\Controllers\PengecekanController;
 use App\Http\Controllers\BarangFilterController;
 use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\PengaduanController;
+use App\Http\Controllers\PdfExportController;
 
 
 /*
@@ -116,5 +117,43 @@ Route::middleware('auth')->group(function () {
 
 
     Route::resource('kategori', KategoriController::class); 
+    // Group untuk routes yang memerlukan autentikasi
+Route::middleware(['auth'])->group(function () {
+    
+    // Export Barang
+    Route::get('/export/barang', [PdfExportController::class, 'exportBarang'])
+        ->name('export.barang');
+    
+    Route::get('/export/barang/kategori/{kategori}', [PdfExportController::class, 'exportBarangByKategori'])
+        ->name('export.barang.kategori');
+    
+    Route::get('/export/barang/ruangan/{ruangan}', [PdfExportController::class, 'exportBarangByRuangan'])
+        ->name('export.barang.ruangan');
+    
+    // Export Kategori
+    Route::get('/export/kategori', [PdfExportController::class, 'exportKategori'])
+        ->name('export.kategori');
+    
+    // Export Ruangan
+    Route::get('/export/ruangan', [PdfExportController::class, 'exportRuangan'])
+        ->name('export.ruangan');
+    
+    // Export Pengaduan
+    Route::get('/export/pengaduan', [PdfExportController::class, 'exportPengaduan'])
+        ->name('export.pengaduan');
+    
+    // Export Pengecekan
+    Route::get('/export/pengecekan', [PdfExportController::class, 'exportPengecekan'])
+        ->name('export.pengecekan');
+        Route::middleware(['auth'])->group(function () {
+    Route::get('/export/barang', [PdfExportController::class, 'exportBarang'])
+        ->name('export.barang');
+    
+    Route::get('/export/barang/kategori/{kategori}', [PdfExportController::class, 'exportBarangByKategori'])
+        ->name('export.barang.kategori');
+        });
+        
+});
+
 
 });

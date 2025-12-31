@@ -35,6 +35,7 @@
                                 <span class="sub-item">Barang</span>
                             </a>
                         </li>
+                        
 
                         <li>
                             <a href="{{ route('barang.create') }}" class="{{ Request::is('barang/create') ? 'active' : '' }}">
