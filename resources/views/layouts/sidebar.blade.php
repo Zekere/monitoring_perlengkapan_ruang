@@ -44,7 +44,7 @@
 
                         <li>
                             <a href="{{ url('/kategori') }}" class="{{ Request::is('kategori*') ? 'active' : '' }}">
-                                <span class="sub-item">Kategori</span>
+                                <span class="sub-item">Kategori</span>  
                             </a>
                         </li>
 

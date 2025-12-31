@@ -11,6 +11,7 @@ use App\Http\Controllers\BarangFilterController;
 use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\PengaduanController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Guest Routes (Tidak perlu login)
@@ -110,4 +111,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/barang', 
         [BarangController::class, 'laporan']
     )->name('laporan.barang');
+
+    Route::get('/kategori', [KategoriController::class, 'index']);
+
+
+    Route::resource('kategori', KategoriController::class); 
+
 });
