@@ -11,6 +11,8 @@ use App\Http\Controllers\BarangFilterController;
 use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\PdfExportController;
+use App\Http\Controllers\RiwayatPerbaikanController;
+use App\Http\Controllers\RiwayatPerawatanController; // ← TAMBAHKAN INI
 
 
 /*
@@ -99,6 +101,13 @@ Route::middleware('auth')->group(function () {
     
     /*
     |--------------------------------------------------------------------------
+    | RIWAYAT PERAWATAN Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('riwayat-perawatan', RiwayatPerawatanController::class);
+    
+    /*
+    |--------------------------------------------------------------------------
     | LAPORAN Routes
     |--------------------------------------------------------------------------
     */
@@ -113,12 +122,11 @@ Route::middleware('auth')->group(function () {
         [BarangController::class, 'laporan']
     )->name('laporan.barang');
 
-    Route::get('/kategori', [KategoriController::class, 'index']);
-
-
-    Route::resource('kategori', KategoriController::class); 
-    // Group untuk routes yang memerlukan autentikasi
-Route::middleware(['auth'])->group(function () {
+    /*
+    |--------------------------------------------------------------------------
+    | EXPORT PDF Routes
+    |--------------------------------------------------------------------------
+    */
     
     // Export Barang
     Route::get('/export/barang', [PdfExportController::class, 'exportBarang'])
@@ -145,15 +153,5 @@ Route::middleware(['auth'])->group(function () {
     // Export Pengecekan
     Route::get('/export/pengecekan', [PdfExportController::class, 'exportPengecekan'])
         ->name('export.pengecekan');
-        Route::middleware(['auth'])->group(function () {
-    Route::get('/export/barang', [PdfExportController::class, 'exportBarang'])
-        ->name('export.barang');
     
-    Route::get('/export/barang/kategori/{kategori}', [PdfExportController::class, 'exportBarangByKategori'])
-        ->name('export.barang.kategori');
-        });
-        
-});
-
-
 });

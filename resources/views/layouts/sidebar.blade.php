@@ -22,55 +22,60 @@
                 <span class="text-section">MENU</span>
             </li>
 
-            <li class="nav-item {{ Request::is('barang*', 'kategori*', 'ruangan*', 'pengaduan*') ? 'active' : '' }}">
-                <a href="#masterMenu" data-bs-toggle="collapse" aria-expanded="{{ Request::is('barang*', 'kategori*', 'ruangan*', 'pengaduan*') ? 'true' : 'false' }}">
-                    <i class="fas fa-database"></i>
-                    <p>Data Master</p>
-                    <span class="caret"></span>
+            <!-- Menu Barang -->
+            <li class="nav-item {{ Request::is('barang') && !Request::is('barang/create') ? 'active' : '' }}">
+                <a href="{{ url('/barang') }}">
+                    <i class="fas fa-box"></i>
+                    <p>Barang</p>
                 </a>
-                <div class="collapse nav-collapse {{ Request::is('barang*', 'kategori*', 'ruangan*', 'pengaduan*') ? 'show' : '' }}" id="masterMenu">
-                    <ul>
-                        <li>
-                            <a href="{{ url('/barang') }}" class="{{ Request::is('barang') ? 'active' : '' }}">
-                                <span class="sub-item">Barang</span>
-                            </a>
-                        </li>
-                        
-
-                        <li>
-                            <a href="{{ route('barang.create') }}" class="{{ Request::is('barang/create') ? 'active' : '' }}">
-                                <span class="sub-item">Tambah Barang</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="{{ url('/kategori') }}" class="{{ Request::is('kategori*') ? 'active' : '' }}">
-                                <span class="sub-item">Kategori</span>  
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="{{ url('/ruangan') }}" class="{{ Request::is('ruangan*') ? 'active' : '' }}">
-                                <span class="sub-item">Ruangan</span>
-                            </a>
-                        </li>
-
-                        <!-- MENU PENGADUAN - DITAMBAHKAN DI SINI -->
-                        <li>
-                            <a href="{{ url('/pengaduan') }}" class="{{ Request::is('pengaduan*') ? 'active' : '' }}">
-                                <span class="sub-item">Pengaduan</span>
-                                @php
-                                    $pengaduanMenunggu = \App\Models\PengaduanKerusakan::where('status', 'Menunggu')->count();
-                                @endphp
-                                @if($pengaduanMenunggu > 0)
-                                    <span class="badge badge-warning ms-2">{{ $pengaduanMenunggu }}</span>
-                                @endif
-                            </a>
-                        </li>
-                    </ul>
-                </div>
             </li>
 
+            <!-- Menu Tambah Barang -->
+            <li class="nav-item {{ Request::is('barang/create') ? 'active' : '' }}">
+                <a href="{{ route('barang.create') }}">
+                    <i class="fas fa-plus-circle"></i>
+                    <p>Tambah Barang</p>
+                </a>
+            </li>
+
+            <!-- Menu Kategori -->
+            <li class="nav-item {{ Request::is('kategori*') ? 'active' : '' }}">
+                <a href="{{ url('/kategori') }}">
+                    <i class="fas fa-tags"></i>
+                    <p>Kategori</p>
+                </a>
+            </li>
+
+            <!-- Menu Ruangan -->
+            <li class="nav-item {{ Request::is('ruangan*') ? 'active' : '' }}">
+                <a href="{{ url('/ruangan') }}">
+                    <i class="fas fa-door-open"></i>
+                    <p>Ruangan</p>
+                </a>
+            </li>
+
+            <!-- Menu Pengaduan -->
+            <li class="nav-item {{ Request::is('pengaduan*') ? 'active' : '' }}">
+                <a href="{{ url('/pengaduan') }}">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>Pengaduan</p>
+                    @php
+                        $pengaduanMenunggu = \App\Models\PengaduanKerusakan::where('status', 'Menunggu')->count();
+                    @endphp
+                    @if($pengaduanMenunggu > 0)
+                        <span class="badge badge-warning ms-2">{{ $pengaduanMenunggu }}</span>
+                    @endif
+                </a>
+            </li>
+                        <li class="nav-item">
+                <a class="nav-link {{ request()->is('riwayat-perawatan*') ? 'active' : '' }}" 
+                href="{{ route('riwayat-perawatan.index') }}">
+                    <i class="fas fa-tools"></i>
+                    <span>Riwayat Perawatan</span>
+                </a>
+            </li>
+
+            <!-- Menu Logout -->
             <li class="nav-item mt-3">
                 <a href="{{ route('logout') }}"
                    class="nav-link text-danger"
@@ -82,3 +87,7 @@
         </ul>
     </div>
 </div>
+
+<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+    @csrf
+</form>

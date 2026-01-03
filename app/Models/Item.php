@@ -36,4 +36,26 @@ class Item extends Model
     {
         return $this->belongsTo(Ruangan::class, 'id_ruangan', 'id_ruangan');
     }
+
+    // ========================================
+    // TAMBAHKAN KODE DI BAWAH INI (SEBELUM KURUNG KURAWAL PENUTUP)
+    // ========================================
+
+    /**
+     * Relasi ke Riwayat Perawatan
+     */
+    public function riwayatPerawatan()
+    {
+        return $this->hasMany(RiwayatPerawatan::class, 'id_item', 'id_item')
+                    ->orderBy('tanggal_perawatan', 'desc');
+    }
+
+    /**
+     * Get riwayat perawatan terakhir
+     */
+    public function perawatanTerakhir()
+    {
+        return $this->hasOne(RiwayatPerawatan::class, 'id_item', 'id_item')
+                    ->latestOfMany('tanggal_perawatan');
+    }
 }
