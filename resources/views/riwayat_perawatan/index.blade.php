@@ -2,12 +2,18 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Riwayat Perawatan</h2>
+   <!-- Tambahkan di bagian header/toolbar -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Riwayat Perawatan Barang</h4>
+    <div>
         <a href="{{ route('riwayat-perawatan.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Tambah Perawatan
+            <i class="fas fa-plus"></i> Tambah Data
+        </a>
+        <a href="{{ route('export.riwayat-perawatan') }}" class="btn btn-danger" target="_blank">
+            <i class="fas fa-file-pdf"></i> Export PDF
         </a>
     </div>
+</div>
 
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">

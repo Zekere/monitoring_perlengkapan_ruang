@@ -153,5 +153,9 @@ Route::middleware('auth')->group(function () {
     // Export Pengecekan
     Route::get('/export/pengecekan', [PdfExportController::class, 'exportPengecekan'])
         ->name('export.pengecekan');
+
+    // Export Riwayat Perawatan
+Route::get('/export/riwayat-perawatan', [PdfExportController::class, 'exportRiwayatPerawatan'])
+    ->name('export.riwayat-perawatan');
     
 });

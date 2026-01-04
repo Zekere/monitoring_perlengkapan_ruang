@@ -9,6 +9,7 @@ use App\Models\Kategori;
 use App\Models\Ruangan;
 use App\Models\Pengaduan;
 use App\Models\Pengecekan;
+use App\Models\RiwayatPerawatan; // Tambahkan di bagian atas
 
 class PdfExportController extends Controller
 {
@@ -169,5 +170,49 @@ class PdfExportController extends Controller
         
         return $pdf->download('laporan-pengecekan-' . date('Y-m-d') . '.pdf');
     }
+
+    /**
+ * Export Riwayat Perawatan ke PDF
+ */
+/**
+ * Export Riwayat Perawatan ke PDF
+ */
+public function exportRiwayatPerawatan(Request $request)
+{
+    $query = RiwayatPerawatan::with(['item.kategori', 'item.ruangan']);
+    
+    // Filter berdasarkan jenis perawatan jika ada
+    if ($request->has('jenis_perawatan') && $request->jenis_perawatan != '') {
+        $query->where('jenis_perawatan', $request->jenis_perawatan);
+    }
+    
+    // Filter berdasarkan status jika ada
+    if ($request->has('status') && $request->status != '') {
+        $query->where('status', $request->status);
+    }
+    
+    // Filter berdasarkan tanggal jika ada
+    if ($request->has('start_date') && $request->has('end_date')) {
+        $query->whereBetween('tanggal_perawatan', [$request->start_date, $request->end_date]);
+    }
+    
+    // Filter berdasarkan item jika ada
+    if ($request->has('id_item') && $request->id_item != '') {
+        $query->where('id_item', $request->id_item);
+    }
+    
+    $riwayatPerawatan = $query->orderBy('tanggal_perawatan', 'desc')->get();
+    
+    $pdf = Pdf::loadView('pdf.riwayat-perawatan', [
+        'riwayatPerawatan' => $riwayatPerawatan,
+        'title' => 'Laporan Riwayat Perawatan',
+        'date' => now()->format('d F Y'),
+        'filter' => $request->all()
+    ]);
+    
+    $pdf->setPaper('a4', 'landscape');
+    
+    return $pdf->download('laporan-riwayat-perawatan-' . date('Y-m-d') . '.pdf');
+}
     
 }

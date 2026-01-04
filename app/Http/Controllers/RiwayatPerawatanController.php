@@ -6,6 +6,7 @@ use App\Models\RiwayatPerawatan;
 use App\Models\Item;
 use Illuminate\Http\Request;
 
+
 class RiwayatPerawatanController extends Controller
 {
     public function index(Request $request)
