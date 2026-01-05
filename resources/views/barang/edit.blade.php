@@ -3,33 +3,16 @@
 @section('content')
 <div class="page-inner">
     <div class="page-header">
-        <h4 class="page-title">Edit Barang</h4>
+        <h4 class="page-title">Update Barang</h4>
         <ul class="breadcrumbs">
-            <li class="nav-home">
-                <a href="{{ route('dashboard') }}">
-                    <i class="flaticon-home"></i>
-                </a>
-            </li>
-            <li class="separator">
-                <i class="flaticon-right-arrow"></i>
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('barang.index') }}">Barang</a>
-            </li>
-            <li class="separator">
-                <i class="flaticon-right-arrow"></i>
-            </li>
-            <li class="nav-item">
-                <a href="#">Edit</a>
-            </li>
-        </ul>
+           
     </div>
 
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Form Edit Barang</h4>
+                    <h4 class="card-title">Form Update Barang</h4>
                 </div>
                 <form action="{{ route('barang.update', $item->id_item) }}" method="POST" enctype="multipart/form-data">
                     @csrf

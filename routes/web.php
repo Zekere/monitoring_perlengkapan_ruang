@@ -12,7 +12,8 @@ use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\PdfExportController;
 use App\Http\Controllers\RiwayatPerbaikanController;
-use App\Http\Controllers\RiwayatPerawatanController; // ← TAMBAHKAN INI
+use App\Http\Controllers\RiwayatPerawatanController;
+use App\Http\Controllers\RiwayatBarangController; // ← TAMBAHKAN INI (BARIS BARU)
 
 
 /*
@@ -108,6 +109,33 @@ Route::middleware('auth')->group(function () {
     
     /*
     |--------------------------------------------------------------------------
+    | RIWAYAT PENGECEKAN BARANG Routes ← SECTION BARU
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('riwayat-pengecekan')->name('riwayat.')->group(function () {
+        // Halaman utama - daftar semua riwayat
+        Route::get('/', [RiwayatBarangController::class, 'index'])
+            ->name('index');
+        
+        // Detail riwayat per barang
+        Route::get('/barang/{id_item}', [RiwayatBarangController::class, 'show'])
+            ->name('show');
+        
+        // Export PDF
+        Route::get('/export/pdf', [RiwayatBarangController::class, 'exportPdf'])
+            ->name('export.pdf');
+        
+        // API endpoint untuk AJAX (opsional)
+        Route::get('/api/get', [RiwayatBarangController::class, 'getRiwayat'])
+            ->name('api.get');
+        
+        // Statistik (opsional)
+        Route::get('/statistik', [RiwayatBarangController::class, 'statistics'])
+            ->name('statistics');
+    });
+    
+    /*
+    |--------------------------------------------------------------------------
     | LAPORAN Routes
     |--------------------------------------------------------------------------
     */
@@ -155,7 +183,7 @@ Route::middleware('auth')->group(function () {
         ->name('export.pengecekan');
 
     // Export Riwayat Perawatan
-Route::get('/export/riwayat-perawatan', [PdfExportController::class, 'exportRiwayatPerawatan'])
-    ->name('export.riwayat-perawatan');
+    Route::get('/export/riwayat-perawatan', [PdfExportController::class, 'exportRiwayatPerawatan'])
+        ->name('export.riwayat-perawatan');
     
 });

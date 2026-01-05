@@ -104,14 +104,14 @@ class BarangController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
-    {
-        $barang = Item::findOrFail($id);
-        $kategori = Kategori::all();
-        $ruangan = Ruangan::all();
-        
-        return view('barang.edit', compact('barang', 'kategori', 'ruangan'));
-    }
+   public function edit($id)
+{
+    $item = Item::findOrFail($id);  // Ubah dari $barang ke $item
+    $kategori = Kategori::all();
+    $ruangan = Ruangan::all();
+    
+    return view('barang.edit', compact('item', 'kategori', 'ruangan'));
+}
 
     /**
      * Update the specified resource in storage.

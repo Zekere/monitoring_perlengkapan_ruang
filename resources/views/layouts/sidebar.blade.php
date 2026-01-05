@@ -74,6 +74,13 @@
                     <span>Riwayat Perawatan</span>
                 </a>
             </li>
+                    <li class="nav-item">
+                <a href="{{ route('riwayat.index') }}" 
+                class="nav-link {{ request()->routeIs('riwayat.*') ? 'active' : '' }}">
+                    <i class="fas fa-history nav-icon"></i>
+                    <p>Riwayat Pengecekan</p>
+                </a>
+            </li>
 
             <!-- Menu Logout -->
             <li class="nav-item mt-3">
