@@ -11,6 +11,8 @@ class RiwayatBarang extends Model
 
     protected $table = 'riwayat_barang';
     protected $primaryKey = 'id_riwayat';
+    public $incrementing = true; // PENTING: pastikan ini true
+    protected $keyType = 'int';  // PENTING: tipe primary key
 
     protected $fillable = [
         'id_item',
@@ -18,8 +20,8 @@ class RiwayatBarang extends Model
         'nama_item',
         'kondisi_lama',
         'kondisi_baru',
-        'id_ruangan_lama',
-        'id_ruangan_baru',
+        'id_ruangan_lama',   // SUDAH ADA di database
+        'id_ruangan_baru',   // SUDAH ADA di database
         'jenis_perubahan',
         'keterangan',
         'updated_by'

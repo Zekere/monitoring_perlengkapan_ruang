@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role', // ← TAMBAHAN: kolom role untuk super admin
     ];
 
     /**
@@ -44,5 +45,29 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // ============================================
+    // TAMBAHAN BARU: Helper Methods untuk Role
+    // ============================================
+
+    /**
+     * Check if user is Super Admin
+     *
+     * @return bool
+     */
+    public function isSuperAdmin(): bool
+    {
+        return isset($this->role) && $this->role === 'superadmin';
+    }
+
+    /**
+     * Check if user is Admin
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return isset($this->role) && $this->role === 'admin';
     }
 }

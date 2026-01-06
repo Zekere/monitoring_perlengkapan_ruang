@@ -67,20 +67,38 @@
                     @endif
                 </a>
             </li>
-                        <li class="nav-item">
-                <a class="nav-link {{ request()->is('riwayat-perawatan*') ? 'active' : '' }}" 
-                href="{{ route('riwayat-perawatan.index') }}">
+
+            <!-- Menu Riwayat Perawatan -->
+            <li class="nav-item {{ Request::is('riwayat-perawatan*') ? 'active' : '' }}">
+                <a href="{{ route('riwayat-perawatan.index') }}">
                     <i class="fas fa-tools"></i>
-                    <span>Riwayat Perawatan</span>
+                    <p>Riwayat Perawatan</p>
                 </a>
             </li>
-                    <li class="nav-item">
-                <a href="{{ route('riwayat.index') }}" 
-                class="nav-link {{ request()->routeIs('riwayat.*') ? 'active' : '' }}">
-                    <i class="fas fa-history nav-icon"></i>
+
+            <!-- Menu Riwayat Pengecekan -->
+            <li class="nav-item {{ Request::is('riwayat*') && !Request::is('riwayat-perawatan*') ? 'active' : '' }}">
+                <a href="{{ route('riwayat.index') }}">
+                    <i class="fas fa-history"></i>
                     <p>Riwayat Pengecekan</p>
                 </a>
             </li>
+
+            <!-- ============================================ -->
+            <!-- MENU KELOLA ADMIN (HANYA UNTUK SUPERADMIN) -->
+            <!-- ============================================ -->
+            @if(Auth::check() && Auth::user()->isSuperAdmin())
+            <li class="nav-section">
+                <span class="text-section">PENGATURAN</span>
+            </li>
+
+            <li class="nav-item {{ Request::is('admin*') ? 'active' : '' }}">
+                <a href="{{ route('admin.index') }}">
+                    <i class="fas fa-user-shield"></i>
+                    <p>Kelola Admin</p>
+                </a>
+            </li>
+            @endif
 
             <!-- Menu Logout -->
             <li class="nav-item mt-3">

@@ -13,7 +13,8 @@ use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\PdfExportController;
 use App\Http\Controllers\RiwayatPerbaikanController;
 use App\Http\Controllers\RiwayatPerawatanController;
-use App\Http\Controllers\RiwayatBarangController; // ← TAMBAHKAN INI (BARIS BARU)
+use App\Http\Controllers\RiwayatBarangController;
+use App\Http\Controllers\UserManagementController; // ← TAMBAHAN BARU
 
 
 /*
@@ -109,7 +110,7 @@ Route::middleware('auth')->group(function () {
     
     /*
     |--------------------------------------------------------------------------
-    | RIWAYAT PENGECEKAN BARANG Routes ← SECTION BARU
+    | RIWAYAT PENGECEKAN BARANG Routes
     |--------------------------------------------------------------------------
     */
     Route::prefix('riwayat-pengecekan')->name('riwayat.')->group(function () {
@@ -132,6 +133,20 @@ Route::middleware('auth')->group(function () {
         // Statistik (opsional)
         Route::get('/statistik', [RiwayatBarangController::class, 'statistics'])
             ->name('statistics');
+    });
+    
+    /*
+    |--------------------------------------------------------------------------
+    | KELOLA ADMIN Routes (SuperAdmin Only) ← SECTION BARU
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('superadmin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/', [UserManagementController::class, 'index'])->name('index');
+        Route::get('/create', [UserManagementController::class, 'create'])->name('create');
+        Route::post('/store', [UserManagementController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [UserManagementController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [UserManagementController::class, 'update'])->name('update');
+        Route::delete('/{id}', [UserManagementController::class, 'destroy'])->name('destroy');
     });
     
     /*
