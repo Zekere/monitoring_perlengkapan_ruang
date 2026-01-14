@@ -1,76 +1,80 @@
 @extends('layouts.template')
 
 @section('content')
-<div class="page-inner">
-    <div class="page-header">
-        <h4 class="page-title">Update Barang</h4>
-        <ul class="breadcrumbs">
-           
+<div class="container-fluid px-2 px-md-3">
+    <div class="page-header mb-3 mb-md-4">
+        <h4 class="page-title fs-5 fs-md-4 mb-1">Update Barang</h4>
     </div>
 
     <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Form Update Barang</h4>
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white p-2 p-md-3">
+                    <h4 class="card-title fs-6 fs-md-5 mb-0">Form Update Barang</h4>
                 </div>
                 <form action="{{ route('barang.update', $item->id_item) }}" method="POST" enctype="multipart/form-data" id="formBarang">
                     @csrf
                     @method('PUT')
-                    <div class="card-body">
-                        <div class="row">
+                    <div class="card-body p-2 p-md-3">
+                        <div class="row g-2 g-md-3">
                             <!-- Kode Barang -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="kode_barang">Kode Barang <span class="text-danger">*</span></label>
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="kode_barang" class="form-label small fw-bold">
+                                        Kode Barang <span class="text-danger">*</span>
+                                    </label>
                                     <input type="text" 
-                                           class="form-control @error('kode_barang') is-invalid @enderror" 
+                                           class="form-control form-control-sm @error('kode_barang') is-invalid @enderror" 
                                            id="kode_barang" 
                                            name="kode_barang" 
                                            value="{{ old('kode_barang', $item->kode_barang) }}" 
                                            required>
                                     @error('kode_barang')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback small">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
                             <!-- Nama Barang -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="nama_item">Nama Barang <span class="text-danger">*</span></label>
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="nama_item" class="form-label small fw-bold">
+                                        Nama Barang <span class="text-danger">*</span>
+                                    </label>
                                     <input type="text" 
-                                           class="form-control @error('nama_item') is-invalid @enderror" 
+                                           class="form-control form-control-sm @error('nama_item') is-invalid @enderror" 
                                            id="nama_item" 
                                            name="nama_item" 
                                            value="{{ old('nama_item', $item->nama_item) }}" 
                                            required>
                                     @error('nama_item')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback small">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
                             <!-- Merk -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="merk">Merk</label>
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="merk" class="form-label small fw-bold">Merk</label>
                                     <input type="text" 
-                                           class="form-control @error('merk') is-invalid @enderror" 
+                                           class="form-control form-control-sm @error('merk') is-invalid @enderror" 
                                            id="merk" 
                                            name="merk" 
                                            value="{{ old('merk', $item->merk) }}">
                                     @error('merk')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback small">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
                             <!-- Kategori -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="id_kategori">Kategori <span class="text-danger">*</span></label>
-                                    <select class="form-control @error('id_kategori') is-invalid @enderror" 
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="id_kategori" class="form-label small fw-bold">
+                                        Kategori <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select form-select-sm @error('id_kategori') is-invalid @enderror" 
                                             id="id_kategori" 
                                             name="id_kategori" 
                                             required>
@@ -83,16 +87,18 @@
                                         @endforeach
                                     </select>
                                     @error('id_kategori')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback small">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
                             <!-- Ruangan -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="id_ruangan">Lokasi/Ruangan <span class="text-danger">*</span></label>
-                                    <select class="form-control @error('id_ruangan') is-invalid @enderror" 
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="id_ruangan" class="form-label small fw-bold">
+                                        Lokasi/Ruangan <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select form-select-sm @error('id_ruangan') is-invalid @enderror" 
                                             id="id_ruangan" 
                                             name="id_ruangan" 
                                             required>
@@ -105,16 +111,18 @@
                                         @endforeach
                                     </select>
                                     @error('id_ruangan')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback small">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
                             <!-- Kondisi -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="kondisi">Kondisi <span class="text-danger">*</span></label>
-                                    <select class="form-control @error('kondisi') is-invalid @enderror" 
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="kondisi" class="form-label small fw-bold">
+                                        Kondisi <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select form-select-sm @error('kondisi') is-invalid @enderror" 
                                             id="kondisi" 
                                             name="kondisi" 
                                             required>
@@ -124,22 +132,22 @@
                                         <option value="Rusak Berat" {{ old('kondisi', $item->kondisi) == 'Rusak Berat' ? 'selected' : '' }}>Rusak Berat</option>
                                     </select>
                                     @error('kondisi')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback small">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
-                            <!-- Foto - UPDATED WITH CAMERA -->
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="foto">Foto Barang</label>
+                            <!-- Foto -->
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label for="foto" class="form-label small fw-bold">Foto Barang</label>
                                     
                                     <!-- Button Group -->
-                                    <div class="btn-group mb-3" role="group">
-                                        <button type="button" class="btn btn-primary" onclick="document.getElementById('foto').click()">
+                                    <div class="d-grid d-sm-flex gap-2 mb-3">
+                                        <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('foto').click()">
                                             <i class="fa fa-upload"></i> Upload Foto
                                         </button>
-                                        <button type="button" class="btn btn-info" onclick="openCamera()">
+                                        <button type="button" class="btn btn-info btn-sm" onclick="openCamera()">
                                             <i class="fa fa-camera"></i> Ambil dari Kamera
                                         </button>
                                     </div>
@@ -156,25 +164,25 @@
                                     <input type="hidden" id="camera_photo" name="camera_photo">
 
                                     @error('foto')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block small">{{ $message }}</div>
                                     @enderror
                                     <small class="form-text text-muted">Format: JPG, JPEG, PNG (Max: 2MB) - Kosongkan jika tidak ingin mengubah foto</small>
                                     
                                     <!-- Current Image -->
                                     @if($item->foto)
                                     <div class="mt-3" id="currentPhoto">
-                                        <label>Foto Saat Ini:</label><br>
+                                        <label class="small fw-bold">Foto Saat Ini:</label><br>
                                         <img src="{{ asset('storage/' . $item->foto) }}" 
                                              alt="Current Photo" 
                                              class="img-thumbnail" 
-                                             style="max-width: 300px;">
+                                             style="max-width: 100%; width: 300px; height: auto;">
                                     </div>
                                     @endif
 
                                     <!-- Image Preview -->
                                     <div id="imagePreview" class="mt-3" style="display: none;">
-                                        <label>Preview Foto Baru:</label><br>
-                                        <img id="preview" src="" alt="Preview" class="img-thumbnail" style="max-width: 300px;">
+                                        <label class="small fw-bold">Preview Foto Baru:</label><br>
+                                        <img id="preview" src="" alt="Preview" class="img-thumbnail" style="max-width: 100%; width: 300px; height: auto;">
                                         <br>
                                         <button type="button" class="btn btn-sm btn-danger mt-2" onclick="clearPhoto()">
                                             <i class="fa fa-trash"></i> Hapus Foto
@@ -185,13 +193,15 @@
                         </div>
                     </div>
 
-                    <div class="card-action">
-                        <button type="submit" class="btn btn-success">
-                            <i class="fa fa-save"></i> Update
-                        </button>
-                        <a href="{{ route('barang.index') }}" class="btn btn-danger">
-                            <i class="fa fa-times"></i> Batal
-                        </a>
+                    <div class="card-footer bg-white p-2 p-md-3">
+                        <div class="d-grid d-sm-flex gap-2">
+                            <button type="submit" class="btn btn-success btn-sm">
+                                <i class="fa fa-save"></i> Update
+                            </button>
+                            <a href="{{ route('barang.index') }}" class="btn btn-danger btn-sm">
+                                <i class="fa fa-times"></i> Batal
+                            </a>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -201,41 +211,41 @@
 
 <!-- Modal Kamera -->
 <div class="modal fade" id="cameraModal" tabindex="-1" role="dialog" aria-labelledby="cameraModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-info text-white">
-                <h5 class="modal-title" id="cameraModalLabel">
+                <h5 class="modal-title fs-6" id="cameraModalLabel">
                     <i class="fa fa-camera"></i> Ambil Foto
                 </h5>
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center">
+            <div class="modal-body text-center p-2 p-md-3">
                 <!-- Video Stream -->
-                <video id="video" width="100%" height="auto" autoplay style="max-width: 640px; border: 2px solid #ddd; border-radius: 8px;"></video>
+                <video id="video" width="100%" height="auto" autoplay class="rounded"></video>
                 
                 <!-- Canvas untuk capture (hidden) -->
                 <canvas id="canvas" style="display: none;"></canvas>
                 
                 <!-- Preview hasil capture -->
                 <div id="capturedImageContainer" style="display: none;">
-                    <img id="capturedImage" src="" alt="Captured" style="max-width: 100%; border: 2px solid #28a745; border-radius: 8px;">
+                    <img id="capturedImage" src="" alt="Captured" class="img-fluid rounded border border-success border-2">
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                    <i class="fa fa-times"></i> Tutup
-                </button>
-                <button type="button" class="btn btn-success" id="captureBtn" onclick="capturePhoto()">
-                    <i class="fa fa-camera"></i> Ambil Foto
-                </button>
-                <button type="button" class="btn btn-primary" id="retakeBtn" onclick="retakePhoto()" style="display: none;">
-                    <i class="fa fa-redo"></i> Foto Ulang
-                </button>
-                <button type="button" class="btn btn-info" id="usePhotoBtn" onclick="usePhoto()" style="display: none;">
-                    <i class="fa fa-check"></i> Gunakan Foto Ini
-                </button>
+            <div class="modal-footer p-2 p-md-3">
+                <div class="d-grid d-sm-flex gap-2 w-100">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                        <i class="fa fa-times"></i> Tutup
+                    </button>
+                    <button type="button" class="btn btn-success btn-sm" id="captureBtn" onclick="capturePhoto()">
+                        <i class="fa fa-camera"></i> Ambil Foto
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" id="retakeBtn" onclick="retakePhoto()" style="display: none;">
+                        <i class="fa fa-redo"></i> Foto Ulang
+                    </button>
+                    <button type="button" class="btn btn-info btn-sm" id="usePhotoBtn" onclick="usePhoto()" style="display: none;">
+                        <i class="fa fa-check"></i> Gunakan Foto
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -262,7 +272,8 @@ function previewImage(event) {
 
 // Buka kamera
 function openCamera() {
-    $('#cameraModal').modal('show');
+    const modal = new bootstrap.Modal(document.getElementById('cameraModal'));
+    modal.show();
     
     const video = document.getElementById('video');
     
@@ -347,7 +358,8 @@ function usePhoto() {
         
         // Stop camera dan tutup modal
         stopCamera();
-        $('#cameraModal').modal('hide');
+        const modal = bootstrap.Modal.getInstance(document.getElementById('cameraModal'));
+        modal.hide();
         
         // Notifikasi
         alert('Foto berhasil diambil!');
@@ -372,7 +384,7 @@ function clearPhoto() {
 }
 
 // Stop camera saat modal ditutup
-$('#cameraModal').on('hidden.bs.modal', function () {
+document.getElementById('cameraModal').addEventListener('hidden.bs.modal', function () {
     stopCamera();
 });
 
@@ -397,34 +409,107 @@ document.getElementById('formBarang').addEventListener('submit', function(e) {
 </script>
 
 <style>
-/* Style untuk button group */
-.btn-group {
-    display: flex;
-    gap: 10px;
+/* Responsive Form */
+@media (max-width: 576px) {
+    .page-title {
+        font-size: 1.1rem !important;
+    }
+    
+    .card-title {
+        font-size: 1rem !important;
+    }
+    
+    .form-label {
+        font-size: 0.85rem !important;
+    }
+    
+    .form-control-sm, .form-select-sm {
+        font-size: 0.85rem;
+        padding: 0.375rem 0.5rem;
+    }
+    
+    .btn-sm {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.85rem;
+    }
 }
 
-/* Style untuk modal */
+/* Modal Responsive */
 #cameraModal .modal-dialog {
-    max-width: 800px;
+    max-width: 95%;
+    margin: 0.5rem auto;
 }
 
-#video, #capturedImage {
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
+@media (min-width: 576px) {
     #cameraModal .modal-dialog {
-        max-width: 95%;
-        margin: 10px auto;
+        max-width: 540px;
     }
-    
-    .btn-group {
-        flex-direction: column;
+}
+
+@media (min-width: 768px) {
+    #cameraModal .modal-dialog {
+        max-width: 720px;
     }
-    
-    .btn-group .btn {
+}
+
+@media (min-width: 992px) {
+    #cameraModal .modal-dialog {
+        max-width: 800px;
+    }
+}
+
+/* Video & Image Responsive */
+#video, #capturedImage {
+    max-width: 100%;
+    height: auto;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Button Group Responsive */
+.d-grid button {
+    width: 100%;
+}
+
+@media (min-width: 576px) {
+    .d-sm-flex button {
+        width: auto;
+    }
+}
+
+/* Image Preview Responsive */
+.img-thumbnail {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* Card Responsive */
+.card {
+    border-radius: 0.5rem;
+}
+
+.card-header {
+    border-bottom: 1px solid #dee2e6;
+}
+
+.card-footer {
+    border-top: 1px solid #dee2e6;
+}
+
+/* Gap utilities untuk button */
+.gap-2 {
+    gap: 0.5rem;
+}
+
+/* Modal Button Responsive */
+@media (max-width: 576px) {
+    .modal-footer .d-grid button {
         width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .modal-footer .d-grid button:last-child {
+        margin-bottom: 0;
     }
 }
 </style>

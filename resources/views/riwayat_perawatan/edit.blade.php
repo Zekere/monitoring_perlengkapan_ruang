@@ -1,24 +1,28 @@
 @extends('layouts.template')
 
 @section('content')
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Edit Riwayat Perawatan</h2>
-        <a href="{{ route('riwayat-perawatan.index') }}" class="btn btn-secondary">
+<div class="container-fluid px-3 px-md-4">
+    <!-- Header Section -->
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 mb-md-4 gap-2">
+        <h2 class="mb-0 fs-4 fs-md-3">Edit Riwayat Perawatan</h2>
+        <a href="{{ route('riwayat-perawatan.index') }}" class="btn btn-secondary btn-sm">
             <i class="fas fa-arrow-left"></i> Kembali
         </a>
     </div>
 
-    <div class="card">
-        <div class="card-body">
+    <div class="card shadow-sm">
+        <div class="card-body p-3 p-md-4">
             <form action="{{ route('riwayat-perawatan.update', $riwayat->id_perawatan) }}" method="POST">
                 @csrf
                 @method('PUT')
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">Barang <span class="text-danger">*</span></label>
+                <div class="row g-3">
+                    <!-- Barang -->
+                    <div class="col-12 col-lg-6">
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">
+                                Barang <span class="text-danger">*</span>
+                            </label>
                             <select name="id_item" class="form-select @error('id_item') is-invalid @enderror" required>
                                 <option value="">Pilih Barang</option>
                                 @foreach($items as $item)
@@ -34,9 +38,12 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">Tanggal Perawatan <span class="text-danger">*</span></label>
+                    <!-- Tanggal Perawatan -->
+                    <div class="col-12 col-lg-6">
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">
+                                Tanggal Perawatan <span class="text-danger">*</span>
+                            </label>
                             <input type="date" name="tanggal_perawatan" 
                                    class="form-control @error('tanggal_perawatan') is-invalid @enderror" 
                                    value="{{ $riwayat->tanggal_perawatan->format('Y-m-d') }}" 
@@ -47,9 +54,12 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">Jenis Perawatan <span class="text-danger">*</span></label>
+                    <!-- Jenis Perawatan -->
+                    <div class="col-12 col-md-6 col-lg-6">
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">
+                                Jenis Perawatan <span class="text-danger">*</span>
+                            </label>
                             <select name="jenis_perawatan" class="form-select @error('jenis_perawatan') is-invalid @enderror" required>
                                 <option value="">Pilih Jenis</option>
                                 <option value="Perbaikan" {{ $riwayat->jenis_perawatan == 'Perbaikan' ? 'selected' : '' }}>Perbaikan</option>
@@ -64,9 +74,12 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">Teknisi <span class="text-danger">*</span></label>
+                    <!-- Teknisi -->
+                    <div class="col-12 col-md-6 col-lg-6">
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">
+                                Teknisi <span class="text-danger">*</span>
+                            </label>
                             <input type="text" name="teknisi" 
                                    class="form-control @error('teknisi') is-invalid @enderror" 
                                    value="{{ $riwayat->teknisi }}" 
@@ -78,9 +91,12 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">Biaya (Rp) <span class="text-danger">*</span></label>
+                    <!-- Biaya -->
+                    <div class="col-12 col-md-6 col-lg-6">
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">
+                                Biaya (Rp) <span class="text-danger">*</span>
+                            </label>
                             <input type="number" name="biaya" 
                                    class="form-control @error('biaya') is-invalid @enderror" 
                                    value="{{ $riwayat->biaya }}" 
@@ -94,9 +110,12 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">Status <span class="text-danger">*</span></label>
+                    <!-- Status -->
+                    <div class="col-12 col-md-6 col-lg-6">
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">
+                                Status <span class="text-danger">*</span>
+                            </label>
                             <select name="status" class="form-select @error('status') is-invalid @enderror" required>
                                 <option value="Selesai" {{ $riwayat->status == 'Selesai' ? 'selected' : '' }}>Selesai</option>
                                 <option value="Dalam Proses" {{ $riwayat->status == 'Dalam Proses' ? 'selected' : '' }}>Dalam Proses</option>
@@ -108,9 +127,12 @@
                         </div>
                     </div>
 
-                    <div class="col-md-12">
-                        <div class="mb-3">
-                            <label class="form-label">Deskripsi <span class="text-danger">*</span></label>
+                    <!-- Deskripsi -->
+                    <div class="col-12">
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">
+                                Deskripsi <span class="text-danger">*</span>
+                            </label>
                             <textarea name="deskripsi" 
                                       class="form-control @error('deskripsi') is-invalid @enderror" 
                                       rows="3" 
@@ -122,9 +144,12 @@
                         </div>
                     </div>
 
-                    <div class="col-md-12">
-                        <div class="mb-3">
-                            <label class="form-label">Catatan Tambahan</label>
+                    <!-- Catatan Tambahan -->
+                    <div class="col-12">
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">
+                                Catatan Tambahan
+                            </label>
                             <textarea name="catatan" 
                                       class="form-control @error('catatan') is-invalid @enderror" 
                                       rows="2" 
@@ -136,9 +161,12 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-2">
-                    <a href="{{ route('riwayat-perawatan.index') }}" class="btn btn-secondary">Batal</a>
-                    <button type="submit" class="btn btn-primary">
+                <!-- Action Buttons -->
+                <div class="d-flex flex-column flex-sm-row justify-content-end gap-2 mt-4">
+                    <a href="{{ route('riwayat-perawatan.index') }}" class="btn btn-secondary order-2 order-sm-1">
+                        Batal
+                    </a>
+                    <button type="submit" class="btn btn-primary order-1 order-sm-2">
                         <i class="fas fa-save"></i> Simpan Perubahan
                     </button>
                 </div>
@@ -146,4 +174,47 @@
         </div>
     </div>
 </div>
+
+<style>
+/* Custom Responsive Styles */
+@media (max-width: 576px) {
+    .card-body {
+        padding: 1rem !important;
+    }
+    
+    h2 {
+        font-size: 1.25rem !important;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+    
+    .form-label {
+        margin-bottom: 0.25rem;
+    }
+    
+    .form-control, .form-select {
+        font-size: 0.95rem;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem !important;
+    }
+}
+
+/* Touch-friendly inputs on mobile */
+@media (max-width: 768px) {
+    .form-control, .form-select {
+        min-height: 44px;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    textarea.form-control {
+        min-height: 100px;
+    }
+}
+</style>
 @endsection
