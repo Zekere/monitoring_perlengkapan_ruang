@@ -7,14 +7,13 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\PengecekanController;
-use App\Http\Controllers\BarangFilterController;
 use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\PdfExportController;
 use App\Http\Controllers\RiwayatPerbaikanController;
 use App\Http\Controllers\RiwayatPerawatanController;
 use App\Http\Controllers\RiwayatBarangController;
-use App\Http\Controllers\UserManagementController; // ← TAMBAHAN BARU
+use App\Http\Controllers\UserManagementController;
 
 
 /*
@@ -57,8 +56,8 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     
-    // BARANG
-    Route::get('/barang', [BarangFilterController::class, 'index'])->name('barang.index');
+    // BARANG - SEMUA MENGGUNAKAN BarangController
+    Route::get('/barang', [BarangController::class, 'index'])->name('barang.index');
     Route::get('/barang/create', [BarangController::class, 'create'])->name('barang.create');
     Route::post('/barang', [BarangController::class, 'store'])->name('barang.store');
     Route::get('/barang/{id}/edit', [BarangController::class, 'edit'])->name('barang.edit');
@@ -137,7 +136,7 @@ Route::middleware('auth')->group(function () {
     
     /*
     |--------------------------------------------------------------------------
-    | KELOLA ADMIN Routes (SuperAdmin Only) ← SECTION BARU
+    | KELOLA ADMIN Routes (SuperAdmin Only)
     |--------------------------------------------------------------------------
     */
     Route::middleware('superadmin')->prefix('admin')->name('admin.')->group(function () {

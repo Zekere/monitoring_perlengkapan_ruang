@@ -42,7 +42,8 @@ class BarangController extends Controller
             $query->where('kondisi', $request->kondisi);
         }
 
-        $barang = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
+        // Ganti paginate dengan get() untuk menampilkan semua data
+        $barang = $query->orderBy('created_at', 'desc')->get();
         $kategori = Kategori::all();
         $ruangan = Ruangan::all();
 
@@ -106,7 +107,7 @@ class BarangController extends Controller
      */
    public function edit($id)
 {
-    $item = Item::findOrFail($id);  // Ubah dari $barang ke $item
+    $item = Item::findOrFail($id);
     $kategori = Kategori::all();
     $ruangan = Ruangan::all();
     

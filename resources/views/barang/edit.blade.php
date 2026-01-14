@@ -14,7 +14,7 @@
                 <div class="card-header">
                     <h4 class="card-title">Form Update Barang</h4>
                 </div>
-                <form action="{{ route('barang.update', $item->id_item) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('barang.update', $item->id_item) }}" method="POST" enctype="multipart/form-data" id="formBarang">
                     @csrf
                     @method('PUT')
                     <div class="card-body">
@@ -129,36 +129,56 @@
                                 </div>
                             </div>
 
-                            <!-- Foto -->
-                            <div class="col-md-6">
+                            <!-- Foto - UPDATED WITH CAMERA -->
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="foto">Foto Barang</label>
+                                    
+                                    <!-- Button Group -->
+                                    <div class="btn-group mb-3" role="group">
+                                        <button type="button" class="btn btn-primary" onclick="document.getElementById('foto').click()">
+                                            <i class="fa fa-upload"></i> Upload Foto
+                                        </button>
+                                        <button type="button" class="btn btn-info" onclick="openCamera()">
+                                            <i class="fa fa-camera"></i> Ambil dari Kamera
+                                        </button>
+                                    </div>
+
+                                    <!-- Hidden File Input -->
                                     <input type="file" 
-                                           class="form-control-file @error('foto') is-invalid @enderror" 
+                                           class="form-control-file d-none @error('foto') is-invalid @enderror" 
                                            id="foto" 
                                            name="foto" 
                                            accept="image/*"
                                            onchange="previewImage(event)">
+
+                                    <!-- Hidden input untuk menyimpan foto dari kamera -->
+                                    <input type="hidden" id="camera_photo" name="camera_photo">
+
                                     @error('foto')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
                                     <small class="form-text text-muted">Format: JPG, JPEG, PNG (Max: 2MB) - Kosongkan jika tidak ingin mengubah foto</small>
                                     
                                     <!-- Current Image -->
                                     @if($item->foto)
-                                    <div class="mt-2">
+                                    <div class="mt-3" id="currentPhoto">
                                         <label>Foto Saat Ini:</label><br>
                                         <img src="{{ asset('storage/' . $item->foto) }}" 
                                              alt="Current Photo" 
                                              class="img-thumbnail" 
-                                             style="max-width: 200px;">
+                                             style="max-width: 300px;">
                                     </div>
                                     @endif
 
                                     <!-- Image Preview -->
-                                    <div id="imagePreview" class="mt-2" style="display: none;">
+                                    <div id="imagePreview" class="mt-3" style="display: none;">
                                         <label>Preview Foto Baru:</label><br>
-                                        <img id="preview" src="" alt="Preview" class="img-thumbnail" style="max-width: 200px;">
+                                        <img id="preview" src="" alt="Preview" class="img-thumbnail" style="max-width: 300px;">
+                                        <br>
+                                        <button type="button" class="btn btn-sm btn-danger mt-2" onclick="clearPhoto()">
+                                            <i class="fa fa-trash"></i> Hapus Foto
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -179,17 +199,234 @@
     </div>
 </div>
 
+<!-- Modal Kamera -->
+<div class="modal fade" id="cameraModal" tabindex="-1" role="dialog" aria-labelledby="cameraModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="cameraModalLabel">
+                    <i class="fa fa-camera"></i> Ambil Foto
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <!-- Video Stream -->
+                <video id="video" width="100%" height="auto" autoplay style="max-width: 640px; border: 2px solid #ddd; border-radius: 8px;"></video>
+                
+                <!-- Canvas untuk capture (hidden) -->
+                <canvas id="canvas" style="display: none;"></canvas>
+                
+                <!-- Preview hasil capture -->
+                <div id="capturedImageContainer" style="display: none;">
+                    <img id="capturedImage" src="" alt="Captured" style="max-width: 100%; border: 2px solid #28a745; border-radius: 8px;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fa fa-times"></i> Tutup
+                </button>
+                <button type="button" class="btn btn-success" id="captureBtn" onclick="capturePhoto()">
+                    <i class="fa fa-camera"></i> Ambil Foto
+                </button>
+                <button type="button" class="btn btn-primary" id="retakeBtn" onclick="retakePhoto()" style="display: none;">
+                    <i class="fa fa-redo"></i> Foto Ulang
+                </button>
+                <button type="button" class="btn btn-info" id="usePhotoBtn" onclick="usePhoto()" style="display: none;">
+                    <i class="fa fa-check"></i> Gunakan Foto Ini
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script>
+let videoStream = null;
+let capturedPhotoData = null;
+
+// Preview image dari file upload
 function previewImage(event) {
-    var reader = new FileReader();
-    reader.onload = function(){
-        var output = document.getElementById('preview');
-        output.src = reader.result;
-        document.getElementById('imagePreview').style.display = 'block';
-    };
-    reader.readAsDataURL(event.target.files[0]);
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('preview').src = e.target.result;
+            document.getElementById('imagePreview').style.display = 'block';
+            document.getElementById('camera_photo').value = '';
+        };
+        reader.readAsDataURL(file);
+    }
 }
+
+// Buka kamera
+function openCamera() {
+    $('#cameraModal').modal('show');
+    
+    const video = document.getElementById('video');
+    
+    // Request akses kamera
+    navigator.mediaDevices.getUserMedia({ 
+        video: { 
+            facingMode: 'environment', // Gunakan kamera belakang di mobile
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+        } 
+    })
+    .then(function(stream) {
+        videoStream = stream;
+        video.srcObject = stream;
+        video.play();
+        
+        // Reset buttons
+        document.getElementById('captureBtn').style.display = 'inline-block';
+        document.getElementById('retakeBtn').style.display = 'none';
+        document.getElementById('usePhotoBtn').style.display = 'none';
+        document.getElementById('video').style.display = 'block';
+        document.getElementById('capturedImageContainer').style.display = 'none';
+    })
+    .catch(function(err) {
+        console.error("Error accessing camera: ", err);
+        alert('Tidak dapat mengakses kamera. Pastikan browser memiliki izin kamera.');
+    });
+}
+
+// Capture foto dari video stream
+function capturePhoto() {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const capturedImage = document.getElementById('capturedImage');
+    
+    // Set canvas size sesuai video
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    
+    // Draw video frame ke canvas
+    const context = canvas.getContext('2d');
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Convert canvas to base64
+    capturedPhotoData = canvas.toDataURL('image/jpeg', 0.9);
+    
+    // Tampilkan preview
+    capturedImage.src = capturedPhotoData;
+    document.getElementById('video').style.display = 'none';
+    document.getElementById('capturedImageContainer').style.display = 'block';
+    
+    // Update buttons
+    document.getElementById('captureBtn').style.display = 'none';
+    document.getElementById('retakeBtn').style.display = 'inline-block';
+    document.getElementById('usePhotoBtn').style.display = 'inline-block';
+}
+
+// Foto ulang
+function retakePhoto() {
+    capturedPhotoData = null;
+    document.getElementById('video').style.display = 'block';
+    document.getElementById('capturedImageContainer').style.display = 'none';
+    
+    // Update buttons
+    document.getElementById('captureBtn').style.display = 'inline-block';
+    document.getElementById('retakeBtn').style.display = 'none';
+    document.getElementById('usePhotoBtn').style.display = 'none';
+}
+
+// Gunakan foto yang sudah di-capture
+function usePhoto() {
+    if (capturedPhotoData) {
+        // Set preview di form
+        document.getElementById('preview').src = capturedPhotoData;
+        document.getElementById('imagePreview').style.display = 'block';
+        
+        // Simpan data foto ke hidden input
+        document.getElementById('camera_photo').value = capturedPhotoData;
+        
+        // Clear file input
+        document.getElementById('foto').value = '';
+        
+        // Stop camera dan tutup modal
+        stopCamera();
+        $('#cameraModal').modal('hide');
+        
+        // Notifikasi
+        alert('Foto berhasil diambil!');
+    }
+}
+
+// Stop camera stream
+function stopCamera() {
+    if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+    }
+}
+
+// Clear/hapus foto
+function clearPhoto() {
+    document.getElementById('preview').src = '';
+    document.getElementById('imagePreview').style.display = 'none';
+    document.getElementById('foto').value = '';
+    document.getElementById('camera_photo').value = '';
+    capturedPhotoData = null;
+}
+
+// Stop camera saat modal ditutup
+$('#cameraModal').on('hidden.bs.modal', function () {
+    stopCamera();
+});
+
+// Tambahkan handler untuk submit form dengan camera photo
+document.getElementById('formBarang').addEventListener('submit', function(e) {
+    const cameraPhoto = document.getElementById('camera_photo').value;
+    const fileInput = document.getElementById('foto');
+    
+    // Jika ada foto dari kamera dan tidak ada file upload
+    if (cameraPhoto && !fileInput.files.length) {
+        // Convert base64 to blob
+        fetch(cameraPhoto)
+            .then(res => res.blob())
+            .then(blob => {
+                const file = new File([blob], "camera-photo.jpg", { type: "image/jpeg" });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+            });
+    }
+});
 </script>
+
+<style>
+/* Style untuk button group */
+.btn-group {
+    display: flex;
+    gap: 10px;
+}
+
+/* Style untuk modal */
+#cameraModal .modal-dialog {
+    max-width: 800px;
+}
+
+#video, #capturedImage {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #cameraModal .modal-dialog {
+        max-width: 95%;
+        margin: 10px auto;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+    }
+    
+    .btn-group .btn {
+        width: 100%;
+    }
+}
+</style>
 @endpush
 @endsection

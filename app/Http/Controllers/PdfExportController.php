@@ -4,21 +4,21 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\Barang;
+use App\Models\Item;  // Ganti dari Barang ke Item
 use App\Models\Kategori;
 use App\Models\Ruangan;
 use App\Models\Pengaduan;
 use App\Models\Pengecekan;
-use App\Models\RiwayatPerawatan; // Tambahkan di bagian atas
+use App\Models\RiwayatPerawatan;
 
 class PdfExportController extends Controller
 {
     /**
-     * Export Barang ke PDF
+     * Export Barang (Item) ke PDF
      */
     public function exportBarang()
     {
-        $barang = Barang::with(['kategori', 'ruangan'])->get();
+        $barang = Item::with(['kategori', 'ruangan'])->get();
         
         $pdf = Pdf::loadView('pdf.barang', [
             'barang' => $barang,
@@ -37,7 +37,7 @@ class PdfExportController extends Controller
     public function exportBarangByKategori($kategoriId)
     {
         $kategori = Kategori::findOrFail($kategoriId);
-        $barang = Barang::where('kategori_id', $kategoriId)
+        $barang = Item::where('id_kategori', $kategoriId)
                         ->with(['kategori', 'ruangan'])
                         ->get();
         
@@ -58,7 +58,7 @@ class PdfExportController extends Controller
     public function exportBarangByRuangan($ruanganId)
     {
         $ruangan = Ruangan::findOrFail($ruanganId);
-        $barang = Barang::where('ruangan_id', $ruanganId)
+        $barang = Item::where('id_ruangan', $ruanganId)
                         ->with(['kategori', 'ruangan'])
                         ->get();
         
@@ -78,7 +78,8 @@ class PdfExportController extends Controller
      */
     public function exportKategori()
     {
-        $kategori = Kategori::withCount('barang')->get();
+        // Sesuaikan dengan nama relasi di model Kategori
+        $kategori = Kategori::withCount('items')->get(); // atau tetap 'barang' tergantung nama relasi
         
         $pdf = Pdf::loadView('pdf.kategori', [
             'kategori' => $kategori,
@@ -96,7 +97,8 @@ class PdfExportController extends Controller
      */
     public function exportRuangan()
     {
-        $ruangan = Ruangan::withCount('barang')->get();
+        // Sesuaikan dengan nama relasi di model Ruangan
+        $ruangan = Ruangan::withCount('items')->get(); // atau tetap 'barang' tergantung nama relasi
         
         $pdf = Pdf::loadView('pdf.ruangan', [
             'ruangan' => $ruangan,
@@ -114,7 +116,8 @@ class PdfExportController extends Controller
      */
     public function exportPengaduan(Request $request)
     {
-        $query = Pengaduan::with(['user', 'barang']);
+        // Sesuaikan relasi 'barang' menjadi 'item' jika perlu
+        $query = Pengaduan::with(['user', 'item']); // atau tetap 'barang' tergantung nama relasi
         
         // Filter berdasarkan status jika ada
         if ($request->has('status') && $request->status != '') {
@@ -145,7 +148,8 @@ class PdfExportController extends Controller
      */
     public function exportPengecekan(Request $request)
     {
-        $query = Pengecekan::with(['user', 'barang']);
+        // Sesuaikan relasi 'barang' menjadi 'item' jika perlu
+        $query = Pengecekan::with(['user', 'item']); // atau tetap 'barang' tergantung nama relasi
         
         // Filter berdasarkan kondisi jika ada
         if ($request->has('kondisi') && $request->kondisi != '') {
@@ -172,47 +176,43 @@ class PdfExportController extends Controller
     }
 
     /**
- * Export Riwayat Perawatan ke PDF
- */
-/**
- * Export Riwayat Perawatan ke PDF
- */
-public function exportRiwayatPerawatan(Request $request)
-{
-    $query = RiwayatPerawatan::with(['item.kategori', 'item.ruangan']);
-    
-    // Filter berdasarkan jenis perawatan jika ada
-    if ($request->has('jenis_perawatan') && $request->jenis_perawatan != '') {
-        $query->where('jenis_perawatan', $request->jenis_perawatan);
+     * Export Riwayat Perawatan ke PDF
+     */
+    public function exportRiwayatPerawatan(Request $request)
+    {
+        $query = RiwayatPerawatan::with(['item.kategori', 'item.ruangan']);
+        
+        // Filter berdasarkan jenis perawatan jika ada
+        if ($request->has('jenis_perawatan') && $request->jenis_perawatan != '') {
+            $query->where('jenis_perawatan', $request->jenis_perawatan);
+        }
+        
+        // Filter berdasarkan status jika ada
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+        
+        // Filter berdasarkan tanggal jika ada
+        if ($request->has('start_date') && $request->has('end_date')) {
+            $query->whereBetween('tanggal_perawatan', [$request->start_date, $request->end_date]);
+        }
+        
+        // Filter berdasarkan item jika ada
+        if ($request->has('id_item') && $request->id_item != '') {
+            $query->where('id_item', $request->id_item);
+        }
+        
+        $riwayatPerawatan = $query->orderBy('tanggal_perawatan', 'desc')->get();
+        
+        $pdf = Pdf::loadView('pdf.riwayat-perawatan', [
+            'riwayatPerawatan' => $riwayatPerawatan,
+            'title' => 'Laporan Riwayat Perawatan',
+            'date' => now()->format('d F Y'),
+            'filter' => $request->all()
+        ]);
+        
+        $pdf->setPaper('a4', 'landscape');
+        
+        return $pdf->download('laporan-riwayat-perawatan-' . date('Y-m-d') . '.pdf');
     }
-    
-    // Filter berdasarkan status jika ada
-    if ($request->has('status') && $request->status != '') {
-        $query->where('status', $request->status);
-    }
-    
-    // Filter berdasarkan tanggal jika ada
-    if ($request->has('start_date') && $request->has('end_date')) {
-        $query->whereBetween('tanggal_perawatan', [$request->start_date, $request->end_date]);
-    }
-    
-    // Filter berdasarkan item jika ada
-    if ($request->has('id_item') && $request->id_item != '') {
-        $query->where('id_item', $request->id_item);
-    }
-    
-    $riwayatPerawatan = $query->orderBy('tanggal_perawatan', 'desc')->get();
-    
-    $pdf = Pdf::loadView('pdf.riwayat-perawatan', [
-        'riwayatPerawatan' => $riwayatPerawatan,
-        'title' => 'Laporan Riwayat Perawatan',
-        'date' => now()->format('d F Y'),
-        'filter' => $request->all()
-    ]);
-    
-    $pdf->setPaper('a4', 'landscape');
-    
-    return $pdf->download('laporan-riwayat-perawatan-' . date('Y-m-d') . '.pdf');
-}
-    
 }

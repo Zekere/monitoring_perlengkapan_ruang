@@ -9,7 +9,6 @@
             Daftar Barang</h2>
             <p class="text-muted mb-0">Kelola seluruh data inventaris barang</p>
         </div>
-       
     </div>
 
     @if(session('success'))
@@ -82,70 +81,75 @@
         <div class="card-body">
             <!-- Form Filter -->
             <form method="GET" action="{{ route('barang.index') }}" class="row g-2 mb-3 align-items-center">
-    <div class="col-md-3">
-        <input type="text" name="search" class="form-control form-control-sm"
-               placeholder="🔍 Cari barang..."
-               value="{{ request('search') }}">
-    </div>
+                <div class="col-md-3">
+                    <input type="text" name="search" class="form-control form-control-sm"
+                           placeholder="🔍 Cari barang..."
+                           value="{{ request('search') }}">
+                </div>
 
-    <div class="col-md-2">
-        <select name="kategori" class="form-select form-select-sm">
-            <option value="">🏷️ Semua Kategori</option>
-            @foreach($kategori as $kat)
-                <option value="{{ $kat->id_kategori }}" {{ request('kategori') == $kat->id_kategori ? 'selected' : '' }}>
-                    {{ $kat->nama_kategori }}
-                </option>
-            @endforeach
-        </select>
-    </div>
+                <div class="col-md-2">
+                    <select name="kategori" class="form-select form-select-sm">
+                        <option value="">🏷️ Semua Kategori</option>
+                        @foreach($kategori as $kat)
+                            <option value="{{ $kat->id_kategori }}" {{ request('kategori') == $kat->id_kategori ? 'selected' : '' }}>
+                                {{ $kat->nama_kategori }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
-    <div class="col-md-2">
-        <select name="ruangan" class="form-select form-select-sm">
-            <option value="">📍 Semua Ruangan</option>
-            @foreach($ruangan as $ruang)
-                <option value="{{ $ruang->id_ruangan }}" {{ request('ruangan') == $ruang->id_ruangan ? 'selected' : '' }}>
-                    {{ $ruang->nama_ruangan }}
-                </option>
-            @endforeach
-        </select>
-    </div>
+                <div class="col-md-2">
+                    <select name="ruangan" class="form-select form-select-sm">
+                        <option value="">📍 Semua Ruangan</option>
+                        @foreach($ruangan as $ruang)
+                            <option value="{{ $ruang->id_ruangan }}" {{ request('ruangan') == $ruang->id_ruangan ? 'selected' : '' }}>
+                                {{ $ruang->nama_ruangan }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
-    <div class="col-md-2">
-        <select name="kondisi" class="form-select form-select-sm">
-            <option value="">⚙️ Semua Kondisi</option>
-            <option value="Baik" {{ request('kondisi') == 'Baik' ? 'selected' : '' }}>Baik</option>
-            <option value="Rusak Ringan" {{ request('kondisi') == 'Rusak Ringan' ? 'selected' : '' }}>Rusak Ringan</option>
-            <option value="Rusak Berat" {{ request('kondisi') == 'Rusak Berat' ? 'selected' : '' }}>Rusak Berat</option>
-        </select>
-    </div>
+                <div class="col-md-2">
+                    <select name="kondisi" class="form-select form-select-sm">
+                        <option value="">⚙️ Semua Kondisi</option>
+                        <option value="Baik" {{ request('kondisi') == 'Baik' ? 'selected' : '' }}>Baik</option>
+                        <option value="Rusak Ringan" {{ request('kondisi') == 'Rusak Ringan' ? 'selected' : '' }}>Rusak Ringan</option>
+                        <option value="Rusak Berat" {{ request('kondisi') == 'Rusak Berat' ? 'selected' : '' }}>Rusak Berat</option>
+                    </select>
+                </div>
 
-    <div class="col-md-3 text-end">
-        <button class="btn btn-primary btn-sm">
-            <i class="fas fa-search"></i> Cari
-        </button>
-        <a href="{{ route('barang.index') }}" class="btn btn-outline-secondary btn-sm">
-            <i class="fas fa-rotate"></i> Reset
-        </a>
-    </div>
-</form>
+                <div class="col-md-3 text-end">
+                    <button class="btn btn-primary btn-sm">
+                        <i class="fas fa-search"></i> Cari
+                    </button>
+                    <a href="{{ route('barang.index') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-rotate"></i> Reset
+                    </a>
+                </div>
+            </form>
 
+            <!-- Info Total Data -->
+            <div class="mb-3">
+                <p class="text-muted mb-0">
+                    <i class="fas fa-info-circle"></i> 
+                    Menampilkan <strong>{{ $barang->count() }}</strong> data barang
+                </p>
+            </div>
 
             <!-- Tabel Data -->
             <div class="table-responsive">
-                <table class="table table-hover">
-                    <table class="table table-hover align-middle">
-    <thead class="table-light">
-        <tr>
-            <th>No</th>
-            <th>Kode</th>
-            <th>Barang</th>
-            <th>Kategori</th>
-            <th>Ruangan</th>
-            <th class="text-center">Kondisi</th>
-            <th class="text-center">Aksi</th>
-        </tr>
-    </thead>
-  
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>No</th>
+                            <th>Kode</th>
+                            <th>Barang</th>
+                            <th>Kategori</th>
+                            <th>Ruangan</th>
+                            <th class="text-center">Kondisi</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         @forelse($barang as $index => $item)
                             <tr>
@@ -178,21 +182,21 @@
                                     @endif
                                 </td>
                                 <td>
-                                     <a href="{{ route('barang.edit', $item) }}" class="btn btn-sm btn-warning">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                           <form action="{{ route('barang.destroy', $item->id_item) }}"
-                                      method="POST"
-                                      class="d-inline"
-                                      onsubmit="return confirm('Yakin ingin menghapus?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
+                                    <a href="{{ route('barang.edit', $item) }}" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('barang.destroy', $item->id_item) }}"
+                                          method="POST"
+                                          class="d-inline"
+                                          onsubmit="return confirm('Yakin ingin menghapus?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
                         @empty
                             <tr>
                                 <td colspan="7" class="text-center py-4">
@@ -204,17 +208,6 @@
                     </tbody>
                 </table>
             </div>
-
-            @if(method_exists($barang, 'hasPages') && $barang->hasPages())
-            <div class="d-flex justify-content-between align-items-center mt-3">
-                <div class="text-muted">
-                    Menampilkan {{ $barang->firstItem() }} - {{ $barang->lastItem() }} dari {{ $barang->total() }} data
-                </div>
-                <div>
-                    {{ $barang->links() }}
-                </div>
-            </div>
-            @endif
         </div>
     </div>
 </div>
