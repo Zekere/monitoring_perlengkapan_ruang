@@ -51,7 +51,7 @@
                             <i class="fas fa-box"></i>
                         </div>
                         <div>
-                            <h6 class="mb-0 text-muted small">Total Barang</h6>
+                            <h6 class="mb-0 text-muted small">Total Aset</h6>
                             <h3 class="mb-0 fw-bold">{{ $kategori->sum(function($k) { return $k->items->count(); }) }}</h3>
                         </div>
                     </div>
@@ -78,7 +78,7 @@
                             <th class="py-3 text-dark fw-semibold" style="width: 60px;">No</th>
                             <th class="py-3 text-dark fw-semibold">Nama Kategori</th>
                             <th class="py-3 text-dark fw-semibold">Deskripsi</th>
-                            <th class="py-3 text-dark fw-semibold" style="width: 120px;">Jumlah Barang</th>
+                            <th class="py-3 text-dark fw-semibold" style="width: 120px;">Jumlah Aset</th>
                             <th class="py-3 text-dark fw-semibold" style="width: 150px;">Aksi</th>
                         </tr>
                     </thead>

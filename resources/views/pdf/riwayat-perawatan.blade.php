@@ -251,7 +251,7 @@
                     <strong>{{ $item->item->nama_item ?? '-' }}</strong><br>
                     <small style="color: #7f8c8d;">{{ $item->item->kategori->nama_kategori ?? '-' }}</small>
                 </td>
-                <td>{{ $item->item->kode_item ?? '-' }}</td>
+                <td>{{ $item->item->kode_barang ?? '-' }}</td>
                 <td>
                     <span class="badge badge-preventif">{{ $item->jenis_perawatan }}</span>
                 </td>

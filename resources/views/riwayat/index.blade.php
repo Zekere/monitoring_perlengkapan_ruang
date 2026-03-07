@@ -82,6 +82,14 @@
                         </div>
                     </form>
 
+                    <!-- Info Total Data -->
+                    <div class="mb-3">
+                        <p class="text-muted mb-0 small">
+                            <i class="fas fa-info-circle"></i> 
+                            Menampilkan <strong>{{ $riwayat->count() }}</strong> data riwayat
+                        </p>
+                    </div>
+
                     <!-- Desktop Table View -->
                     <div class="table-responsive d-none d-lg-block">
                         <table class="table table-bordered table-striped table-hover align-middle">
@@ -99,7 +107,7 @@
                             <tbody>
                                 @forelse($riwayat as $index => $r)
                                 <tr>
-                                    <td class="small">{{ $riwayat->firstItem() + $index }}</td>
+                                    <td class="small">{{ $index + 1 }}</td>
                                     <td>
                                         <small>
                                             <strong>{{ $r->created_at->format('d/m/Y') }}</strong><br>
@@ -286,20 +294,6 @@
                             </div>
                         @endforelse
                     </div>
-
-                    <!-- Pagination -->
-                    @if($riwayat->hasPages())
-                    <div class="mt-3">
-                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
-                            <div class="text-muted small">
-                                Menampilkan {{ $riwayat->firstItem() }} - {{ $riwayat->lastItem() }} dari {{ $riwayat->total() }} data
-                            </div>
-                            <div>
-                                {{ $riwayat->appends(request()->all())->links() }}
-                            </div>
-                        </div>
-                    </div>
-                    @endif
                 </div>
             </div>
         </div>
@@ -379,17 +373,6 @@
 /* Icon alignment */
 .fas {
     vertical-align: middle;
-}
-
-/* Pagination responsive */
-@media (max-width: 576px) {
-    .pagination {
-        font-size: 0.85rem;
-    }
-    
-    .pagination .page-link {
-        padding: 0.375rem 0.75rem;
-    }
 }
 
 /* Timeline arrow */

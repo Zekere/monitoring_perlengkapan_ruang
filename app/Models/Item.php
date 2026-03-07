@@ -19,10 +19,12 @@ class Item extends Model
         'foto',
         'id_kategori',
         'id_ruangan',
-        'kondisi'
+        'kondisi',
+        'jumlah_perawatan', // ← kolom permanen penghitung perawatan
     ];
 
-    // Relasi
+    // ── Relasi ──────────────────────────────────────────────
+
     public function kategori()
     {
         return $this->belongsTo(Kategori::class, 'id_kategori', 'id_kategori');
@@ -39,7 +41,17 @@ class Item extends Model
                     ->orderBy('created_at', 'desc');
     }
 
-    // Event listener untuk tracking perubahan
+    /**
+     * Relasi ke riwayat perawatan barang.
+     * Digunakan untuk withCount('riwayatPerawatan') di BarangController.
+     */
+    public function riwayatPerawatan()
+    {
+        return $this->hasMany(RiwayatPerawatan::class, 'id_item', 'id_item');
+    }
+
+    // ── Event listener untuk tracking perubahan ─────────────
+
     protected static function boot()
     {
         parent::boot();
@@ -47,22 +59,21 @@ class Item extends Model
         // Saat akan update
         static::updating(function ($item) {
             $original = $item->getOriginal();
-            $changes = $item->getDirty();
+            $changes  = $item->getDirty();
 
             // Cek apakah ada perubahan pada field yang perlu di-track
             if (isset($changes['kondisi']) || isset($changes['id_ruangan'])) {
-                // Simpan riwayat perubahan
                 RiwayatBarang::create([
-                    'id_item' => $item->id_item,
-                    'kode_barang' => $item->kode_barang,
-                    'nama_item' => $item->nama_item,
-                    'kondisi_lama' => $original['kondisi'] ?? null,
-                    'kondisi_baru' => $item->kondisi,
+                    'id_item'         => $item->id_item,
+                    'kode_barang'     => $item->kode_barang,
+                    'nama_item'       => $item->nama_item,
+                    'kondisi_lama'    => $original['kondisi'] ?? null,
+                    'kondisi_baru'    => $item->kondisi,
                     'id_ruangan_lama' => $original['id_ruangan'] ?? null,
                     'id_ruangan_baru' => $item->id_ruangan,
                     'jenis_perubahan' => self::detectChangeType($changes),
-                    'keterangan' => self::generateKeterangan($original, $item),
-                    'updated_by' => auth()->user()->name ?? 'System'
+                    'keterangan'      => self::generateKeterangan($original, $item),
+                    'updated_by'      => auth()->user()->name ?? 'System'
                 ]);
             }
         });
@@ -70,19 +81,21 @@ class Item extends Model
         // Saat barang baru dibuat
         static::created(function ($item) {
             RiwayatBarang::create([
-                'id_item' => $item->id_item,
-                'kode_barang' => $item->kode_barang,
-                'nama_item' => $item->nama_item,
-                'kondisi_lama' => null,
-                'kondisi_baru' => $item->kondisi,
+                'id_item'         => $item->id_item,
+                'kode_barang'     => $item->kode_barang,
+                'nama_item'       => $item->nama_item,
+                'kondisi_lama'    => null,
+                'kondisi_baru'    => $item->kondisi,
                 'id_ruangan_lama' => null,
                 'id_ruangan_baru' => $item->id_ruangan,
                 'jenis_perubahan' => 'Data',
-                'keterangan' => 'Barang baru ditambahkan',
-                'updated_by' => auth()->user()->name ?? 'System'
+                'keterangan'      => 'Barang baru ditambahkan',
+                'updated_by'      => auth()->user()->name ?? 'System'
             ]);
         });
     }
+
+    // ── Helper methods ───────────────────────────────────────
 
     // Deteksi jenis perubahan
     private static function detectChangeType($changes)
@@ -111,13 +124,13 @@ class Item extends Model
         }
 
         if (($original['id_ruangan'] ?? null) !== $item->id_ruangan) {
-            $ruanganLama = $original['id_ruangan'] 
+            $ruanganLama = $original['id_ruangan']
                 ? Ruangan::find($original['id_ruangan'])->nama_ruangan ?? 'Tidak diketahui'
                 : 'Belum ada ruangan';
-            $ruanganBaru = $item->id_ruangan 
+            $ruanganBaru = $item->id_ruangan
                 ? Ruangan::find($item->id_ruangan)->nama_ruangan ?? 'Tidak diketahui'
                 : 'Tidak ada ruangan';
-            
+
             $keterangan[] = "Ruangan berubah dari '{$ruanganLama}' ke '{$ruanganBaru}'";
         }
 

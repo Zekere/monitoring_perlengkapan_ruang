@@ -39,4 +39,23 @@ class RiwayatPerawatan extends Model
     {
         return 'Rp ' . number_format($this->biaya, 0, ',', '.');
     }
+
+    // ── Auto increment jumlah_perawatan di tabel items ──────
+    protected static function boot()
+    {
+        parent::boot();
+
+        /**
+         * Setiap kali perawatan baru ditambahkan (store),
+         * kolom jumlah_perawatan di tabel items bertambah 1.
+         *
+         * Kolom ini TIDAK berkurang saat data perawatan dihapus,
+         * sehingga indikator di halaman barang tetap tampil
+         * meskipun riwayatnya sudah dihapus.
+         */
+        static::created(function ($riwayat) {
+            Item::where('id_item', $riwayat->id_item)
+                ->increment('jumlah_perawatan');
+        });
+    }
 }

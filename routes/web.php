@@ -105,6 +105,11 @@ Route::middleware('auth')->group(function () {
     | RIWAYAT PERAWATAN Routes
     |--------------------------------------------------------------------------
     */
+
+    // ← TAMBAHAN: Statistik perawatan (WAJIB di atas resource agar tidak bentrok)
+    Route::get('/riwayat-perawatan/statistik', [RiwayatPerawatanController::class, 'statistik'])
+        ->name('riwayat-perawatan.statistik');
+
     Route::resource('riwayat-perawatan', RiwayatPerawatanController::class);
     
     /*

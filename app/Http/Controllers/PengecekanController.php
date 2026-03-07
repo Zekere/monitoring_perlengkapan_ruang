@@ -21,7 +21,7 @@ class PengecekanController extends Controller
             'detailPengecekan.item'
         ])
         ->orderBy('tanggal_cek', 'desc')
-        ->paginate(10);
+        ->get(); // Ganti paginate(10) dengan get()
 
         return view('pengecekan.index', compact('pengecekan'));
     }

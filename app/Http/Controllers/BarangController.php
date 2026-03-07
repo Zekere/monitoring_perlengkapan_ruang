@@ -16,6 +16,8 @@ class BarangController extends Controller
      */
     public function index(Request $request)
     {
+        // Tidak perlu withCount — jumlah_perawatan sudah tersimpan
+        // permanen di kolom items.jumlah_perawatan
         $query = Item::with(['kategori', 'ruangan']);
 
         // Filter search
@@ -43,9 +45,9 @@ class BarangController extends Controller
         }
 
         // Ganti paginate dengan get() untuk menampilkan semua data
-        $barang = $query->orderBy('created_at', 'desc')->get();
+        $barang   = $query->orderBy('created_at', 'desc')->get();
         $kategori = Kategori::all();
-        $ruangan = Ruangan::all();
+        $ruangan  = Ruangan::all();
 
         return view('barang.index', compact('barang', 'kategori', 'ruangan'));
     }
@@ -56,8 +58,8 @@ class BarangController extends Controller
     public function create()
     {
         $kategori = Kategori::all();
-        $ruangan = Ruangan::all();
-        
+        $ruangan  = Ruangan::all();
+
         return view('barang.create', compact('kategori', 'ruangan'));
     }
 
@@ -68,21 +70,21 @@ class BarangController extends Controller
     {
         $request->validate([
             'kode_barang' => 'required|unique:items,kode_barang',
-            'nama_item' => 'required|string|max:255',
-            'merk' => 'nullable|string|max:100',
+            'nama_item'   => 'required|string|max:255',
+            'merk'        => 'nullable|string|max:100',
             'id_kategori' => 'required|exists:kategori,id_kategori',
-            'id_ruangan' => 'nullable|exists:ruangan,id_ruangan',
-            'kondisi' => 'required|in:Baik,Rusak Ringan,Rusak Berat',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'id_ruangan'  => 'nullable|exists:ruangan,id_ruangan',
+            'kondisi'     => 'required|in:Baik,Rusak Ringan,Rusak Berat',
+            'foto'        => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
         $data = $request->except('foto');
 
         // Handle upload foto
         if ($request->hasFile('foto')) {
-            $foto = $request->file('foto');
+            $foto     = $request->file('foto');
             $namaFoto = time() . '_' . $foto->getClientOriginalName();
-            $path = $foto->storeAs('barang', $namaFoto, 'public');
+            $path     = $foto->storeAs('barang', $namaFoto, 'public');
             $data['foto'] = $path;
         }
 
@@ -98,21 +100,21 @@ class BarangController extends Controller
     public function show($id)
     {
         $barang = Item::with(['kategori', 'ruangan'])->findOrFail($id);
-        
+
         return view('barang.show', compact('barang'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-   public function edit($id)
-{
-    $item = Item::findOrFail($id);
-    $kategori = Kategori::all();
-    $ruangan = Ruangan::all();
-    
-    return view('barang.edit', compact('item', 'kategori', 'ruangan'));
-}
+    public function edit($id)
+    {
+        $item     = Item::findOrFail($id);
+        $kategori = Kategori::all();
+        $ruangan  = Ruangan::all();
+
+        return view('barang.edit', compact('item', 'kategori', 'ruangan'));
+    }
 
     /**
      * Update the specified resource in storage.
@@ -123,12 +125,12 @@ class BarangController extends Controller
 
         $request->validate([
             'kode_barang' => 'required|unique:items,kode_barang,' . $id . ',id_item',
-            'nama_item' => 'required|string|max:255',
-            'merk' => 'nullable|string|max:100',
+            'nama_item'   => 'required|string|max:255',
+            'merk'        => 'nullable|string|max:100',
             'id_kategori' => 'required|exists:kategori,id_kategori',
-            'id_ruangan' => 'nullable|exists:ruangan,id_ruangan',
-            'kondisi' => 'required|in:Baik,Rusak Ringan,Rusak Berat',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'id_ruangan'  => 'nullable|exists:ruangan,id_ruangan',
+            'kondisi'     => 'required|in:Baik,Rusak Ringan,Rusak Berat',
+            'foto'        => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
         $data = $request->except('foto');
@@ -140,9 +142,9 @@ class BarangController extends Controller
                 Storage::disk('public')->delete($barang->foto);
             }
 
-            $foto = $request->file('foto');
+            $foto     = $request->file('foto');
             $namaFoto = time() . '_' . $foto->getClientOriginalName();
-            $path = $foto->storeAs('barang', $namaFoto, 'public');
+            $path     = $foto->storeAs('barang', $namaFoto, 'public');
             $data['foto'] = $path;
         }
 
@@ -176,9 +178,9 @@ class BarangController extends Controller
     public function exportPdf()
     {
         $barang = Item::with(['kategori', 'ruangan'])->get();
-        
+
         $pdf = Pdf::loadView('barang.pdf', compact('barang'));
-        
+
         return $pdf->download('daftar-barang-' . date('Y-m-d') . '.pdf');
     }
 
@@ -198,7 +200,7 @@ class BarangController extends Controller
             $query->where('id_kategori', $request->kategori);
         }
 
-        $barang = $query->get();
+        $barang   = $query->get();
         $kategori = Kategori::all();
 
         return view('barang.laporan', compact('barang', 'kategori'));

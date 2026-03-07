@@ -50,7 +50,7 @@
             <li class="nav-item {{ Request::is('ruangan*') ? 'active' : '' }}">
                 <a href="{{ url('/ruangan') }}">
                     <i class="fas fa-door-open"></i>
-                    <p>Ruangan</p>
+                    <p>lokasi dan Ruangan</p>
                 </a>
             </li>
 
