@@ -62,10 +62,10 @@
                             </label>
                             <select name="jenis_perawatan" class="form-select @error('jenis_perawatan') is-invalid @enderror" required>
                                 <option value="">Pilih Jenis</option>
-                                <option value="Perbaikan" {{ $riwayat->jenis_perawatan == 'Perbaikan' ? 'selected' : '' }}>Perbaikan</option>
+                                <option value="Perbaikan"   {{ $riwayat->jenis_perawatan == 'Perbaikan'   ? 'selected' : '' }}>Perbaikan</option>
                                 <option value="Penggantian" {{ $riwayat->jenis_perawatan == 'Penggantian' ? 'selected' : '' }}>Penggantian</option>
                                 <option value="Pembersihan" {{ $riwayat->jenis_perawatan == 'Pembersihan' ? 'selected' : '' }}>Pembersihan</option>
-                                <option value="Kalibrasi" {{ $riwayat->jenis_perawatan == 'Kalibrasi' ? 'selected' : '' }}>Kalibrasi</option>
+                                <option value="Kalibrasi"   {{ $riwayat->jenis_perawatan == 'Kalibrasi'   ? 'selected' : '' }}>Kalibrasi</option>
                                 <option value="Maintenance" {{ $riwayat->jenis_perawatan == 'Maintenance' ? 'selected' : '' }}>Maintenance</option>
                             </select>
                             @error('jenis_perawatan')
@@ -116,14 +116,25 @@
                             <label class="form-label small fw-semibold">
                                 Status <span class="text-danger">*</span>
                             </label>
-                            <select name="status" class="form-select @error('status') is-invalid @enderror" required>
-                                <option value="Selesai" {{ $riwayat->status == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                            <select name="status" 
+                                    id="statusSelect"
+                                    class="form-select @error('status') is-invalid @enderror" 
+                                    required>
+                                <option value="Selesai"      {{ $riwayat->status == 'Selesai'      ? 'selected' : '' }}>Selesai</option>
                                 <option value="Dalam Proses" {{ $riwayat->status == 'Dalam Proses' ? 'selected' : '' }}>Dalam Proses</option>
-                                <option value="Ditunda" {{ $riwayat->status == 'Ditunda' ? 'selected' : '' }}>Ditunda</option>
+                                <option value="Ditunda"      {{ $riwayat->status == 'Ditunda'      ? 'selected' : '' }}>Ditunda</option>
                             </select>
                             @error('status')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+
+                            {{-- Info otomatis, hanya muncul saat Selesai --}}
+                            <div id="kondisiInfo" 
+                                 class="mt-2 p-2 rounded d-flex align-items-center gap-2" 
+                                 style="display:none !important; background:#d1fae5; color:#065f46; font-size:.82rem;">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Kondisi barang akan otomatis berubah menjadi <strong>Baik</strong> setelah disimpan.</span>
+                            </div>
                         </div>
                     </div>
 
@@ -176,24 +187,19 @@
 </div>
 
 <style>
-/* Custom Responsive Styles */
 @media (max-width: 576px) {
     .card-body {
         padding: 1rem !important;
     }
-    
     h2 {
         font-size: 1.25rem !important;
     }
-    
     .btn {
         width: 100%;
     }
-    
     .form-label {
         margin-bottom: 0.25rem;
     }
-    
     .form-control, .form-select {
         font-size: 0.95rem;
     }
@@ -205,16 +211,33 @@
     }
 }
 
-/* Touch-friendly inputs on mobile */
 @media (max-width: 768px) {
     .form-control, .form-select {
         min-height: 44px;
         padding: 0.5rem 0.75rem;
     }
-    
     textarea.form-control {
         min-height: 100px;
     }
 }
 </style>
+
+<script>
+(function () {
+    const sel  = document.getElementById('statusSelect');
+    const info = document.getElementById('kondisiInfo');
+
+    function render() {
+        if (sel.value === 'Selesai') {
+            info.style.display = 'flex';
+        } else {
+            info.style.display = 'none';
+        }
+    }
+
+    sel.addEventListener('change', render);
+    render(); // jalankan saat halaman pertama kali dimuat
+})();
+</script>
+
 @endsection

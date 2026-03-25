@@ -11,7 +11,7 @@
             </h2>
             <p class="text-muted mb-0 small">Analisis frekuensi perawatan & kondisi inventaris</p>
         </div>
-        <a href="{{ route('riwayat-perawatan.index') }}" class="btn btn-outline-secondary btn-sm mt-2 mt-md-0">
+        <a href="{{ route('barang.index') }}" class="btn btn-outline-secondary btn-sm mt-2 mt-md-0">
             <i class="fas fa-arrow-left me-1"></i> Kembali
         </a>
     </div>
@@ -65,7 +65,7 @@
                 <div class="card-header bg-white border-bottom py-3 px-3">
                     <h6 class="fw-bold mb-0">
                         <i class="fas fa-trophy text-warning me-2"></i>
-                        Top 10 Barang Paling Sering Dirawat
+                        Barang Yang Sering Mendapatkan Perbaikan
                     </h6>
                 </div>
                 <div class="card-body p-3">
@@ -74,7 +74,7 @@
                             $pct = round(($item->jumlah_perawatan / $maxCount) * 100);
                             $colors = ['#ef4444','#f97316','#f59e0b','#84cc16','#22c55e','#14b8a6','#3b82f6','#8b5cf6','#ec4899','#6b7280'];
                             $color = $colors[$index] ?? '#6b7280';
-                            $medal = $index == 0 ? '🥇' : ($index == 1 ? '🥈' : ($index == 2 ? '🥉' : ''));
+                            $medal = $index == 0 ? '1' : ($index == 1 ? '2' : ($index == 2 ? '3' : ''));
                         @endphp
                         <div class="mb-3">
                             <div class="d-flex justify-content-between align-items-center mb-1">

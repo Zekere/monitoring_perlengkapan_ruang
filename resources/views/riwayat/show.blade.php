@@ -14,8 +14,8 @@
                 <!-- Image Section -->
                 <div class="col-12 col-md-3 col-lg-2">
                     @if($item->foto)
-                        <img src="{{ asset('storage/' . $item->foto) }}" 
-                             class="img-fluid rounded w-100" 
+                        <img src="{{ asset('storage/' . $item->foto) }}"
+                             class="img-fluid rounded w-100"
                              alt="{{ $item->nama_item }}"
                              style="max-height: 200px; object-fit: cover;">
                     @else
@@ -25,7 +25,7 @@
                         </div>
                     @endif
                 </div>
-                
+
                 <!-- Info Section -->
                 <div class="col-12 col-md-9 col-lg-10">
                     <!-- Desktop Table View -->
@@ -45,8 +45,8 @@
                             </tr>
                             <tr>
                                 <th class="small">Kondisi Saat Ini</th>
-                                <td>: 
-                                    <span class="badge 
+                                <td>:
+                                    <span class="badge
                                         @if($item->kondisi == 'Baik') bg-success
                                         @elseif($item->kondisi == 'Rusak Ringan') bg-warning text-dark
                                         @else bg-danger
@@ -83,7 +83,7 @@
                         <div class="row">
                             <div class="col-6">
                                 <strong class="small d-block text-muted">Kondisi</strong>
-                                <span class="badge 
+                                <span class="badge
                                     @if($item->kondisi == 'Baik') bg-success
                                     @elseif($item->kondisi == 'Rusak Ringan') bg-warning text-dark
                                     @else bg-danger
@@ -104,16 +104,20 @@
 
     <!-- Riwayat Perubahan -->
     <div class="card shadow-sm">
-        <div class="card-header bg-info text-white p-2 p-md-3">
+        <div class="card-header bg-info text-white p-2 p-md-3 d-flex justify-content-between align-items-center">
             <h4 class="mb-0 fs-5 fs-md-4">
                 <i class="fas fa-history"></i> Riwayat Perubahan Barang
             </h4>
+            <span class="badge bg-white text-info">
+                {{ $riwayat->count() }} data
+            </span>
         </div>
         <div class="card-body p-2 p-md-3">
             @if($riwayat->count() > 0)
                 <div class="timeline">
                     @foreach($riwayat as $r)
                     <div class="timeline-item mb-3 mb-md-4">
+
                         <!-- Desktop Timeline View -->
                         <div class="row d-none d-md-flex">
                             <div class="col-md-2 text-end">
@@ -143,7 +147,7 @@
                                             @if($r->jenis_perubahan == 'Data' && !$r->kondisi_lama)
                                                 <span class="badge bg-success">BARANG BARU</span>
                                             @else
-                                                <span class="badge 
+                                                <span class="badge
                                                     @if($r->jenis_perubahan == 'Kondisi') bg-warning text-dark
                                                     @elseif($r->jenis_perubahan == 'Ruangan') bg-info
                                                     @elseif($r->jenis_perubahan == 'Semua') bg-danger
@@ -152,12 +156,11 @@
                                                     {{ strtoupper($r->jenis_perubahan) }}
                                                 </span>
                                             @endif
-                                            
                                             <small class="float-end text-muted">
                                                 <i class="fas fa-user"></i> {{ $r->updated_by }}
                                             </small>
                                         </h5>
-                                        
+
                                         <div class="mt-3">
                                             @if($r->kondisi_lama !== $r->kondisi_baru)
                                                 <div class="alert alert-light mb-2">
@@ -177,7 +180,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            
+
                                             @if($r->id_ruangan_lama !== $r->id_ruangan_baru)
                                                 <div class="alert alert-light mb-2">
                                                     <strong class="small"><i class="fas fa-door-open"></i> Perpindahan Ruangan:</strong><br>
@@ -192,10 +195,11 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            
+
                                             @if($r->keterangan)
                                                 <div class="alert alert-secondary mb-0">
-                                                    <i class="fas fa-sticky-note"></i> <strong class="small">Catatan:</strong><br>
+                                                    <i class="fas fa-sticky-note"></i>
+                                                    <strong class="small">Catatan:</strong><br>
                                                     <span class="small">{{ $r->keterangan }}</span>
                                                 </div>
                                             @endif
@@ -215,7 +219,7 @@
                                             @if($r->jenis_perubahan == 'Data' && !$r->kondisi_lama)
                                                 <span class="badge bg-success" style="font-size: 0.7rem;">BARANG BARU</span>
                                             @else
-                                                <span class="badge 
+                                                <span class="badge
                                                     @if($r->jenis_perubahan == 'Kondisi') bg-warning text-dark
                                                     @elseif($r->jenis_perubahan == 'Ruangan') bg-info
                                                     @elseif($r->jenis_perubahan == 'Semua') bg-danger
@@ -241,7 +245,7 @@
                                     <!-- Timestamp -->
                                     <div class="mb-2">
                                         <small class="text-muted">
-                                            <i class="fas fa-clock"></i> 
+                                            <i class="fas fa-clock"></i>
                                             {{ $r->created_at->format('d M Y, H:i:s') }}
                                             <em class="d-block">({{ $r->created_at->diffForHumans() }})</em>
                                         </small>
@@ -256,7 +260,7 @@
                                                     {{ $r->kondisi_lama ?? 'Baru' }}
                                                 </span>
                                                 <i class="fas fa-arrow-right small"></i>
-                                                <span class="badge 
+                                                <span class="badge
                                                     @if($r->kondisi_baru == 'Baik') bg-success
                                                     @elseif($r->kondisi_baru == 'Rusak Ringan') bg-warning text-dark
                                                     @else bg-danger
@@ -266,7 +270,7 @@
                                             </div>
                                         </div>
                                     @endif
-                                    
+
                                     @if($r->id_ruangan_lama !== $r->id_ruangan_baru)
                                         <div class="mb-2 p-2 bg-light rounded">
                                             <strong class="small d-block"><i class="fas fa-door-open"></i> Ruangan:</strong>
@@ -281,10 +285,10 @@
                                             </div>
                                         </div>
                                     @endif
-                                    
+
                                     @if($r->keterangan)
                                         <div class="p-2 bg-secondary bg-opacity-10 rounded">
-                                            <i class="fas fa-sticky-note"></i> 
+                                            <i class="fas fa-sticky-note"></i>
                                             <strong class="small">Catatan:</strong><br>
                                             <span class="small">{{ $r->keterangan }}</span>
                                         </div>
@@ -299,16 +303,13 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                     @endforeach
                 </div>
 
-                <!-- Pagination -->
-                @if($riwayat->hasPages())
-                <div class="mt-3 mt-md-4">
-                    {{ $riwayat->links() }}
-                </div>
-                @endif
+                {{-- Pagination dihapus karena sudah pakai get() --}}
+
             @else
                 <div class="text-center text-muted py-5">
                     <i class="fas fa-inbox fa-3x fa-md-4x mb-3"></i>
@@ -356,78 +357,33 @@
 @media (max-width: 576px) {
     .fs-5 { font-size: 0.95rem !important; }
     .small { font-size: 0.8rem !important; }
-    
-    .card-body {
-        padding: 0.75rem !important;
-    }
-    
-    .btn-sm {
-        padding: 0.375rem 0.75rem;
-        font-size: 0.85rem;
-    }
+    .card-body { padding: 0.75rem !important; }
+    .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.85rem; }
 }
 
-/* Badge styling */
-.badge {
-    padding: 0.35em 0.65em;
-    font-size: 0.75rem;
+.badge { padding: 0.35em 0.65em; font-size: 0.75rem; }
+@media (max-width: 576px) {
+    .badge { font-size: 0.7rem; padding: 0.25em 0.5em; }
 }
+
+.alert { padding: 0.75rem; }
+@media (max-width: 576px) {
+    .alert { padding: 0.5rem; }
+}
+
+.gap-1 { gap: 0.25rem; }
 
 @media (max-width: 576px) {
-    .badge {
-        font-size: 0.7rem;
-        padding: 0.25em 0.5em;
-    }
+    .img-fluid { max-height: 150px !important; }
 }
 
-/* Alert responsive */
-.alert {
-    padding: 0.75rem;
-}
-
-@media (max-width: 576px) {
-    .alert {
-        padding: 0.5rem;
-    }
-}
-
-/* Gap utility */
-.gap-1 {
-    gap: 0.25rem;
-}
-
-/* Image responsive */
-@media (max-width: 576px) {
-    .img-fluid {
-        max-height: 150px !important;
-    }
-}
-
-/* Card hover effect mobile */
 @media (max-width: 767px) {
-    .timeline-item .card {
-        transition: transform 0.2s;
-    }
-    
-    .timeline-item .card:active {
-        transform: scale(0.98);
-    }
+    .timeline-item .card { transition: transform 0.2s; }
+    .timeline-item .card:active { transform: scale(0.98); }
 }
 
-/* Border utilities */
-.border-top {
-    border-top: 1px solid #dee2e6 !important;
-}
-
-/* Icon sizing */
-.fa-arrow-right {
-    font-size: 0.7rem;
-    opacity: 0.7;
-}
-
-/* Background opacity */
-.bg-opacity-10 {
-    --bs-bg-opacity: 0.1;
-}
+.border-top { border-top: 1px solid #dee2e6 !important; }
+.fa-arrow-right { font-size: 0.7rem; opacity: 0.7; }
+.bg-opacity-10 { --bs-bg-opacity: 0.1; }
 </style>
 @endpush

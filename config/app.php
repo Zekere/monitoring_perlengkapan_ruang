@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Jakarta', // ← diubah dari UTC ke WIB (UTC+7)
 
     /*
     |--------------------------------------------------------------------------

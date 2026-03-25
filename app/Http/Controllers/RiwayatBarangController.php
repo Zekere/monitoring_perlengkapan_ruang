@@ -9,7 +9,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class RiwayatBarangController extends Controller
 {
-    // Menampilkan semua riwayat
+    // Menampilkan semua riwayat (tanpa limit/paginate)
     public function index(Request $request)
     {
         $query = RiwayatBarang::with(['item', 'ruanganLama', 'ruanganBaru'])
@@ -33,8 +33,8 @@ class RiwayatBarangController extends Controller
             $query->where('jenis_perubahan', $request->jenis_perubahan);
         }
 
-        $riwayat = $query->paginate(20);
-        $items = Item::orderBy('nama_item')->get();
+        $riwayat = $query->get(); // ← ganti paginate(20) dengan get()
+        $items   = Item::orderBy('nama_item')->get();
 
         return view('riwayat.index', compact('riwayat', 'items'));
     }
@@ -43,11 +43,11 @@ class RiwayatBarangController extends Controller
     public function show($id_item)
     {
         $item = Item::with(['kategori', 'ruangan'])->findOrFail($id_item);
-        
+
         $riwayat = RiwayatBarang::where('id_item', $id_item)
             ->with(['ruanganLama', 'ruanganBaru'])
             ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            ->get(); // ← ganti paginate(15) dengan get()
 
         return view('riwayat.show', compact('item', 'riwayat'));
     }
@@ -58,7 +58,6 @@ class RiwayatBarangController extends Controller
         $query = RiwayatBarang::with(['item', 'ruanganLama', 'ruanganBaru'])
             ->orderBy('created_at', 'desc');
 
-        // Apply filters
         if ($request->filled('id_item')) {
             $query->where('id_item', $request->id_item);
         }
@@ -92,7 +91,7 @@ class RiwayatBarangController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $riwayat
+            'data'    => $riwayat
         ]);
     }
 
@@ -100,21 +99,21 @@ class RiwayatBarangController extends Controller
     public function statistics()
     {
         $stats = [
-            'total_perubahan' => RiwayatBarang::count(),
+            'total_perubahan'    => RiwayatBarang::count(),
             'perubahan_hari_ini' => RiwayatBarang::whereDate('created_at', today())->count(),
-            'perubahan_bulan_ini' => RiwayatBarang::whereMonth('created_at', now()->month)
-                ->whereYear('created_at', now()->year)
-                ->count(),
-            'per_jenis' => RiwayatBarang::selectRaw('jenis_perubahan, COUNT(*) as total')
-                ->groupBy('jenis_perubahan')
-                ->get()
-                ->pluck('total', 'jenis_perubahan'),
+            'perubahan_bulan_ini'=> RiwayatBarang::whereMonth('created_at', now()->month)
+                                        ->whereYear('created_at', now()->year)
+                                        ->count(),
+            'per_jenis'          => RiwayatBarang::selectRaw('jenis_perubahan, COUNT(*) as total')
+                                        ->groupBy('jenis_perubahan')
+                                        ->get()
+                                        ->pluck('total', 'jenis_perubahan'),
             'barang_paling_sering' => RiwayatBarang::selectRaw('id_item, COUNT(*) as total')
-                ->with('item')
-                ->groupBy('id_item')
-                ->orderBy('total', 'desc')
-                ->limit(5)
-                ->get()
+                                        ->with('item')
+                                        ->groupBy('id_item')
+                                        ->orderBy('total', 'desc')
+                                        ->limit(5)
+                                        ->get()
         ];
 
         return view('riwayat.statistics', compact('stats'));

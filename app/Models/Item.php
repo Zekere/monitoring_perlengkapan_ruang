@@ -20,7 +20,8 @@ class Item extends Model
         'id_kategori',
         'id_ruangan',
         'kondisi',
-        'jumlah_perawatan', // ← kolom permanen penghitung perawatan
+        'jumlah_perawatan',
+        'harga_satuan',     // ← TAMBAHAN
     ];
 
     // ── Relasi ──────────────────────────────────────────────
@@ -41,10 +42,6 @@ class Item extends Model
                     ->orderBy('created_at', 'desc');
     }
 
-    /**
-     * Relasi ke riwayat perawatan barang.
-     * Digunakan untuk withCount('riwayatPerawatan') di BarangController.
-     */
     public function riwayatPerawatan()
     {
         return $this->hasMany(RiwayatPerawatan::class, 'id_item', 'id_item');
@@ -56,12 +53,10 @@ class Item extends Model
     {
         parent::boot();
 
-        // Saat akan update
         static::updating(function ($item) {
             $original = $item->getOriginal();
             $changes  = $item->getDirty();
 
-            // Cek apakah ada perubahan pada field yang perlu di-track
             if (isset($changes['kondisi']) || isset($changes['id_ruangan'])) {
                 RiwayatBarang::create([
                     'id_item'         => $item->id_item,
@@ -78,7 +73,6 @@ class Item extends Model
             }
         });
 
-        // Saat barang baru dibuat
         static::created(function ($item) {
             RiwayatBarang::create([
                 'id_item'         => $item->id_item,
@@ -97,24 +91,17 @@ class Item extends Model
 
     // ── Helper methods ───────────────────────────────────────
 
-    // Deteksi jenis perubahan
     private static function detectChangeType($changes)
     {
         $hasKondisi = isset($changes['kondisi']);
         $hasRuangan = isset($changes['id_ruangan']);
 
-        if ($hasKondisi && $hasRuangan) {
-            return 'Semua';
-        } elseif ($hasKondisi) {
-            return 'Kondisi';
-        } elseif ($hasRuangan) {
-            return 'Ruangan';
-        } else {
-            return 'Data';
-        }
+        if ($hasKondisi && $hasRuangan) return 'Semua';
+        elseif ($hasKondisi)            return 'Kondisi';
+        elseif ($hasRuangan)            return 'Ruangan';
+        else                            return 'Data';
     }
 
-    // Generate keterangan otomatis
     private static function generateKeterangan($original, $item)
     {
         $keterangan = [];
