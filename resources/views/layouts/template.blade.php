@@ -3,41 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - @yield('title', 'Admin')</title>
-    
+    <title>Aset Monitoring - @yield('title', 'Admin')</title>
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-   
-    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- SweetAlert2 -->
+
+    <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.min.css" rel="stylesheet">
 
-<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.all.min.js"></script>
+    <script src="{{ asset('assets/js/core/jquery.3.2.1.min.js') }}"></script>
+    <script src="{{ asset('assets/js/core/popper.min.js') }}"></script>
+    <script src="{{ asset('assets/js/core/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/kaiadmin.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.all.min.js"></script>
-<script src="{{ asset('assets/js/core/jquery.3.2.1.min.js') }}"></script>
-<script src="{{ asset('assets/js/core/popper.min.js') }}"></script>
-<script src="{{ asset('assets/js/core/bootstrap.min.js') }}"></script>
-<script src="{{ asset('assets/js/kaiadmin.min.js') }}"></script>    <!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
     <style>
         /* =========================================
            ULTIMATE FIX UNTUK OVERFLOW-X
-           Ditambahkan di atas CSS asli kamu
         ========================================= */
-        
-        /* 1. ROOT LEVEL FIX - Paling Penting! */
+
         html {
             overflow-x: hidden !important;
             width: 100vw;
             position: relative;
         }
-        
+
         body {
             overflow-x: hidden !important;
             width: 100%;
@@ -45,20 +41,18 @@
             position: relative;
         }
 
-        /* 2. Bootstrap Row Fix - PENYEBAB UTAMA! */
         .row {
             margin-left: 0 !important;
             margin-right: 0 !important;
             max-width: 100%;
         }
-        
+
         .row > * {
             padding-left: calc(var(--bs-gutter-x) * 0.5);
             padding-right: calc(var(--bs-gutter-x) * 0.5);
         }
 
-        /* 3. Container Fix */
-        .container-fluid, 
+        .container-fluid,
         .container {
             max-width: 100% !important;
             overflow-x: hidden !important;
@@ -66,49 +60,42 @@
             padding-right: 15px;
         }
 
-        /* 4. Media Elements Responsive */
         img, svg, video, canvas, iframe {
             max-width: 100%;
             height: auto;
         }
 
-        /* 5. Flexbox Fix */
         * {
             min-width: 0;
         }
 
-        /* 6. Main Content Width Fix */
         .main-content {
             overflow-x: hidden !important;
             width: calc(100% - 250px);
             max-width: calc(100vw - 250px);
         }
 
-        /* 7. Header Fix */
         .main-header {
             overflow: hidden !important;
             max-width: 100%;
         }
 
-        /* 8. Sidebar Fix */
         .sidebar {
             overflow-x: hidden !important;
         }
 
-        /* 9. Dropdown Menu Fix */
         .dropdown-menu-user {
             max-width: 90vw;
             overflow-x: hidden;
         }
 
-        /* 10. Navbar Container Fix */
         .navbar-container {
             max-width: 100%;
             overflow: hidden;
         }
 
         /* ===============================
-           CSS ASLI KAMU (TIDAK DIHAPUS)
+           CSS UTAMA
         =============================== */
 
         * {
@@ -594,7 +581,7 @@
             .container-fluid {
                 padding: 20px 15px;
             }
-            
+
             .navbar-container {
                 padding: 0 15px;
             }
@@ -619,7 +606,7 @@
             visibility: visible;
         }
     </style>
-    
+
     @stack('styles')
 </head>
 
@@ -646,10 +633,10 @@
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -687,7 +674,6 @@
                 userDropdown.classList.toggle('show');
             });
 
-            // Close dropdown when clicking outside
             document.addEventListener('click', function(e) {
                 if (!profileDropdown.contains(e.target) && !userDropdown.contains(e.target)) {
                     userDropdown.classList.remove('show');
@@ -700,7 +686,7 @@
         if (logoutBtn) {
             logoutBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                
+
                 Swal.fire({
                     title: 'Yakin mau logout?',
                     text: "Kamu akan keluar dari akun ini.",
@@ -721,7 +707,7 @@
         // Active menu highlight
         const currentPath = window.location.pathname;
         const navLinks = document.querySelectorAll('.nav-secondary .nav-item > a');
-        
+
         navLinks.forEach(link => {
             const parent = link.parentElement;
             if (link.getAttribute('href') === currentPath) {
@@ -731,7 +717,7 @@
             }
         });
     </script>
-    
+
     @stack('scripts')
 </body>
 </html>

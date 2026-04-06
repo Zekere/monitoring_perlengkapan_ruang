@@ -102,7 +102,7 @@
 
           {{-- Harga Satuan --}}
           <div class="col-12 col-md-6">
-            <label class="pg-label">Harga Satuan (Rp)</label>
+            <label class="pg-label">Nilai (Rp)</label>
             <input type="number" class="pg-input @error('harga_satuan') is-invalid @enderror"
                    name="harga_satuan" value="{{ old('harga_satuan', $item->harga_satuan ?? 0) }}" min="0">
             @error('harga_satuan')<div class="invalid-msg">{{ $message }}</div>@enderror

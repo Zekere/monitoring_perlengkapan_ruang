@@ -43,7 +43,7 @@
                                     <div class="form-group form-group-default @error('kode_barang') has-error @enderror">
                                         <label>Kode Barang <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="kode_barang"
-                                               value="{{ old('kode_barang', 'TIK-' . date('Y') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT)) }}"
+                                               value="{{ old('kode_barang', 'PU-' . date('Y') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT)) }}"
                                                required>
                                         @error('kode_barang')<small class="text-danger">{{ $message }}</small>@enderror
                                     </div>
@@ -54,7 +54,7 @@
                                     <div class="form-group form-group-default @error('nama_item') has-error @enderror">
                                         <label>Nama Barang <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="nama_item"
-                                               value="{{ old('nama_item') }}" placeholder="Contoh: Laptop ASUS ROG" required>
+                                               value="{{ old('nama_item') }}" placeholder="Contoh: Laptop" required>
                                         @error('nama_item')<small class="text-danger">{{ $message }}</small>@enderror
                                     </div>
                                 </div>
@@ -71,14 +71,14 @@
                                 <!-- Harga Satuan -->
                                 <div class="col-md-6">
                                     <div class="form-group form-group-default @error('harga_satuan') has-error @enderror">
-                                        <label>Harga Satuan (Rp)</label>
+                                        <label>Nilai (Rp)</label>
                                         <input type="number" class="form-control" name="harga_satuan"
                                                value="{{ old('harga_satuan', 0) }}" min="0"
                                                placeholder="Contoh: 5000000">
                                         @error('harga_satuan')<small class="text-danger">{{ $message }}</small>@enderror
                                     </div>
                                     <small class="text-muted ml-3">
-                                        <i class="fas fa-info-circle mr-1"></i>Harga perolehan per satuan barang
+                                        <i class="fas fa-info-circle mr-1"></i>Harga per satuan barang
                                     </small>
                                 </div>
 

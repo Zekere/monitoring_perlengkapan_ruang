@@ -142,43 +142,6 @@
   </div>
   @endif
 
-  {{-- ── Period Filter Bar ── --}}
-  <form method="GET" action="{{ route('riwayat-perawatan.index') }}" id="periodForm">
-    <div class="period-bar anim">
-      <i class="fas fa-calendar-alt" style="color:#6366f1;font-size:.9rem;"></i>
-      <span style="font-size:.82rem;font-weight:600;color:#334155;">Periode:</span>
-
-      {{-- Pilih Bulan --}}
-      <select name="bulan" class="period-select" onchange="document.getElementById('periodForm').submit()">
-        @foreach($namaBulanFull as $num => $nama)
-          <option value="{{ $num }}" {{ $bulan == $num ? 'selected' : '' }}>{{ $nama }}</option>
-        @endforeach
-      </select>
-
-      {{-- Pilih Tahun --}}
-      <select name="tahun" class="period-select" onchange="document.getElementById('periodForm').submit()">
-        @foreach($daftarTahun as $thn)
-          <option value="{{ $thn }}" {{ $tahun == $thn ? 'selected' : '' }}>{{ $thn }}</option>
-        @endforeach
-        @if(!$daftarTahun->contains(date('Y')))
-          <option value="{{ date('Y') }}" {{ $tahun == date('Y') ? 'selected' : '' }}>{{ date('Y') }}</option>
-        @endif
-      </select>
-
-      {{-- Badge aktif --}}
-      <span style="background:#4f46e5;color:#fff;font-size:.75rem;font-weight:700;padding:.35rem .8rem;border-radius:999px;">
-        {{ $namaBulanFull[$bulan] }} {{ $tahun }}
-      </span>
-
-      {{-- Tombol kembali ke bulan ini --}}
-      @if($bulan != date('n') || $tahun != date('Y'))
-        <a href="{{ route('riwayat-perawatan.index') }}"
-           style="font-size:.78rem;color:#6366f1;text-decoration:none;display:flex;align-items:center;gap:.3rem;">
-          <i class="fas fa-undo"></i> Bulan Ini
-        </a>
-      @endif
-    </div>
-
     {{-- Simpan bulan & tahun di filter barang juga --}}
     <input type="hidden" name="bulan" id="hiddenBulan" value="{{ $bulan }}">
     <input type="hidden" name="tahun" id="hiddenTahun" value="{{ $tahun }}">

@@ -82,7 +82,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1 ms-2 ms-md-3">
-                            <p class="text-muted mb-1 small">Total Nilai Barang</p>
+                            <p class="text-muted mb-1 small">Total Nilai</p>
                             <p class="mb-0 fw-bold text-success" style="font-size:clamp(.75rem,1.8vw,.9rem);">
                                 Rp {{ number_format($totalNilaiBarang, 0, ',', '.') }}
                             </p>
