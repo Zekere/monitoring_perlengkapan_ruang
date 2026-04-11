@@ -48,6 +48,7 @@
                                     <option value="Ruangan" {{ request('jenis_perubahan') == 'Ruangan' ? 'selected' : '' }}>Ruangan</option>
                                     <option value="Semua"   {{ request('jenis_perubahan') == 'Semua'   ? 'selected' : '' }}>Semua Perubahan</option>
                                     <option value="Data"    {{ request('jenis_perubahan') == 'Data'    ? 'selected' : '' }}>Data Barang</option>
+                                    <option value="Foto"    {{ request('jenis_perubahan') == 'Foto'    ? 'selected' : '' }}>Foto</option>
                                 </select>
                             </div>
 
@@ -126,6 +127,10 @@
                                             <span class="badge bg-danger">
                                                 <i class="fas fa-sync"></i> Semua
                                             </span>
+                                        @elseif($r->jenis_perubahan == 'Foto')
+                                            <span class="badge" style="background-color: #6f42c1;">
+                                                <i class="fas fa-image"></i> Foto
+                                            </span>
                                         @else
                                             <span class="badge bg-secondary">
                                                 <i class="fas fa-edit"></i> Data
@@ -159,6 +164,31 @@
                                                     <span class="badge bg-info">
                                                         {{ $r->ruanganBaru->nama_ruangan ?? 'Tidak ada' }}
                                                     </span>
+                                                </div>
+                                            @endif
+
+                                            @if($r->jenis_perubahan == 'Foto')
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <strong>Foto:</strong>
+                                                    @if($r->foto_lama)
+                                                        <img src="{{ asset('storage/' . $r->foto_lama) }}"
+                                                             style="width: 32px; height: 25px; object-fit: cover; cursor: pointer;"
+                                                             class="rounded border"
+                                                             title="Foto Lama"
+                                                             onclick="window.open('{{ asset('storage/' . $r->foto_lama) }}', '_blank')">
+                                                    @else
+                                                        <span class="text-muted small fst-italic">Tidak ada</span>
+                                                    @endif
+                                                    <i class="fas fa-arrow-right"></i>
+                                                    @if($r->foto_baru)
+                                                        <img src="{{ asset('storage/' . $r->foto_baru) }}"
+                                                             style="width: 32px; height: 25px; object-fit: cover; cursor: pointer;"
+                                                             class="rounded border"
+                                                             title="Foto Baru"
+                                                             onclick="window.open('{{ asset('storage/' . $r->foto_baru) }}', '_blank')">
+                                                    @else
+                                                        <span class="text-danger small fst-italic">Dihapus</span>
+                                                    @endif
                                                 </div>
                                             @endif
 
@@ -210,6 +240,10 @@
                                                 <span class="badge bg-danger" style="font-size:0.7rem;">
                                                     <i class="fas fa-sync"></i> Semua
                                                 </span>
+                                            @elseif($r->jenis_perubahan == 'Foto')
+                                                <span class="badge" style="background-color: #6f42c1; font-size:0.7rem;">
+                                                    <i class="fas fa-image"></i> Foto
+                                                </span>
                                             @else
                                                 <span class="badge bg-secondary" style="font-size:0.7rem;">
                                                     <i class="fas fa-edit"></i> Data
@@ -258,6 +292,49 @@
                                                     <span class="badge bg-info" style="font-size:0.7rem;">
                                                         {{ $r->ruanganBaru->nama_ruangan ?? 'Tidak ada' }}
                                                     </span>
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                        @if($r->jenis_perubahan == 'Foto')
+                                            <div class="mb-1">
+                                                <strong class="small">Foto:</strong>
+                                                <div class="d-flex align-items-center gap-2 mt-1">
+                                                    <!-- Foto Lama -->
+                                                    <div class="text-center">
+                                                        @if($r->foto_lama)
+                                                            <img src="{{ asset('storage/' . $r->foto_lama) }}"
+                                                                 class="img-thumbnail"
+                                                                 style="width: 55px; height: 42px; object-fit: cover; cursor: pointer;"
+                                                                 alt="Foto Lama"
+                                                                 onclick="window.open('{{ asset('storage/' . $r->foto_lama) }}', '_blank')">
+                                                        @else
+                                                            <div class="bg-white border rounded d-flex align-items-center justify-content-center"
+                                                                 style="width: 55px; height: 42px;">
+                                                                <i class="fas fa-image text-muted small"></i>
+                                                            </div>
+                                                        @endif
+                                                        <small class="d-block text-muted" style="font-size: 0.6rem;">Sebelum</small>
+                                                    </div>
+
+                                                    <i class="fas fa-arrow-right small text-muted"></i>
+
+                                                    <!-- Foto Baru -->
+                                                    <div class="text-center">
+                                                        @if($r->foto_baru)
+                                                            <img src="{{ asset('storage/' . $r->foto_baru) }}"
+                                                                 class="img-thumbnail"
+                                                                 style="width: 55px; height: 42px; object-fit: cover; cursor: pointer;"
+                                                                 alt="Foto Baru"
+                                                                 onclick="window.open('{{ asset('storage/' . $r->foto_baru) }}', '_blank')">
+                                                        @else
+                                                            <div class="bg-white border rounded d-flex align-items-center justify-content-center"
+                                                                 style="width: 55px; height: 42px;">
+                                                                <i class="fas fa-ban text-danger small"></i>
+                                                            </div>
+                                                        @endif
+                                                        <small class="d-block text-muted" style="font-size: 0.6rem;">Sesudah</small>
+                                                    </div>
                                                 </div>
                                             </div>
                                         @endif
@@ -313,10 +390,25 @@
 .d-lg-none .card { border-radius: 0.5rem; transition: transform 0.2s; }
 .d-lg-none .card:hover { transform: translateY(-2px); }
 .gap-1 { gap: 0.25rem; }
+.gap-2 { gap: 0.5rem; }
 .table small { font-size: 0.85em; }
 @media (max-width: 576px) { .table small { font-size: 0.8em; } }
 .fas { vertical-align: middle; }
 .fa-arrow-right { font-size: 0.7rem; opacity: 0.7; }
 .border-top { border-top: 1px solid #dee2e6 !important; }
+
+/* Foto thumbnail hover effect */
+.img-thumbnail[onclick] {
+    transition: opacity 0.2s, transform 0.2s;
+}
+.img-thumbnail[onclick]:hover {
+    opacity: 0.85;
+    transform: scale(1.08);
+}
+td img[onclick]:hover {
+    opacity: 0.85;
+    transform: scale(1.1);
+    transition: opacity 0.2s, transform 0.2s;
+}
 </style>
 @endpush

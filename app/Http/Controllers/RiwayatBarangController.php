@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\RiwayatBarang;
 use App\Models\Item;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class RiwayatBarangController extends Controller
@@ -99,23 +100,62 @@ class RiwayatBarangController extends Controller
     public function statistics()
     {
         $stats = [
-            'total_perubahan'    => RiwayatBarang::count(),
-            'perubahan_hari_ini' => RiwayatBarang::whereDate('created_at', today())->count(),
-            'perubahan_bulan_ini'=> RiwayatBarang::whereMonth('created_at', now()->month)
-                                        ->whereYear('created_at', now()->year)
-                                        ->count(),
-            'per_jenis'          => RiwayatBarang::selectRaw('jenis_perubahan, COUNT(*) as total')
-                                        ->groupBy('jenis_perubahan')
-                                        ->get()
-                                        ->pluck('total', 'jenis_perubahan'),
+            'total_perubahan'      => RiwayatBarang::count(),
+            'perubahan_hari_ini'   => RiwayatBarang::whereDate('created_at', today())->count(),
+            'perubahan_bulan_ini'  => RiwayatBarang::whereMonth('created_at', now()->month)
+                                          ->whereYear('created_at', now()->year)
+                                          ->count(),
+            'per_jenis'            => RiwayatBarang::selectRaw('jenis_perubahan, COUNT(*) as total')
+                                          ->groupBy('jenis_perubahan')
+                                          ->get()
+                                          ->pluck('total', 'jenis_perubahan'),
             'barang_paling_sering' => RiwayatBarang::selectRaw('id_item, COUNT(*) as total')
-                                        ->with('item')
-                                        ->groupBy('id_item')
-                                        ->orderBy('total', 'desc')
-                                        ->limit(5)
-                                        ->get()
+                                          ->with('item')
+                                          ->groupBy('id_item')
+                                          ->orderBy('total', 'desc')
+                                          ->limit(5)
+                                          ->get()
         ];
 
         return view('riwayat.statistics', compact('stats'));
+    }
+
+    // =========================================================
+    // METHOD HELPER — dipanggil dari ItemController
+    // =========================================================
+
+    /**
+     * Catat riwayat perubahan foto barang.
+     *
+     * Panggil method ini dari ItemController saat foto diupdate atau dihapus:
+     *
+     *   RiwayatBarangController::catatPerubahanFoto(
+     *       $item,           // object Item setelah disave
+     *       $fotoLama,       // string|null  — path foto lama
+     *       $fotoBaruPath,   // string|null  — path foto baru (null jika dihapus)
+     *       auth()->user()->name
+     *   );
+     */
+    public static function catatPerubahanFoto(
+        Item    $item,
+        ?string $fotoLama,
+        ?string $fotoBaru,
+        string  $updatedBy,
+        string  $keterangan = 'Foto barang diperbarui'
+    ): void {
+        RiwayatBarang::create([
+            'id_item'         => $item->id_item,
+            'kode_barang'     => $item->kode_barang,
+            'nama_item'       => $item->nama_item,
+            'jenis_perubahan' => 'Foto',
+            'kondisi_lama'    => $item->kondisi,
+            'kondisi_baru'    => $item->kondisi,
+            'id_ruangan_lama' => $item->id_ruangan,
+            'id_ruangan_baru' => $item->id_ruangan,
+            'foto_lama'       => $fotoLama,
+            'foto_baru'       => $fotoBaru,
+            'keterangan'      => $keterangan,
+            'updated_by'      => $updatedBy,
+        ]);
     }
 }

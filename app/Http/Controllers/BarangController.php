@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use App\Models\Kategori;
 use App\Models\Ruangan;
+use App\Models\RiwayatBarang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -59,7 +60,7 @@ class BarangController extends Controller
             'id_kategori'  => 'required|exists:kategori,id_kategori',
             'id_ruangan'   => 'nullable|exists:ruangan,id_ruangan',
             'kondisi'      => 'required|in:Baik,Rusak Ringan,Rusak Berat',
-            'harga_satuan' => 'nullable|integer|min:0',   // ← TAMBAHAN
+            'harga_satuan' => 'nullable|integer|min:0',
             'foto'         => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -73,7 +74,23 @@ class BarangController extends Controller
             $data['foto'] = $path;
         }
 
-        Item::create($data);
+        $item = Item::create($data);
+
+        // Catat riwayat: barang baru ditambahkan
+        RiwayatBarang::create([
+            'id_item'         => $item->id_item,
+            'kode_barang'     => $item->kode_barang,
+            'nama_item'       => $item->nama_item,
+            'jenis_perubahan' => 'Data',
+            'kondisi_lama'    => null,
+            'kondisi_baru'    => $item->kondisi,
+            'id_ruangan_lama' => null,
+            'id_ruangan_baru' => $item->id_ruangan,
+            'foto_lama'       => null,
+            'foto_baru'       => $item->foto ?? null,
+            'keterangan'      => 'Barang baru ditambahkan',
+            'updated_by'      => auth()->user()->name,
+        ]);
 
         return redirect()->route('barang.index')
             ->with('success', 'Barang berhasil ditambahkan!');
@@ -106,25 +123,120 @@ class BarangController extends Controller
             'id_kategori'  => 'required|exists:kategori,id_kategori',
             'id_ruangan'   => 'nullable|exists:ruangan,id_ruangan',
             'kondisi'      => 'required|in:Baik,Rusak Ringan,Rusak Berat',
-            'harga_satuan' => 'nullable|integer|min:0',   // ← TAMBAHAN
+            'harga_satuan' => 'nullable|integer|min:0',
             'foto'         => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
+
+        // Simpan nilai lama sebelum diupdate
+        $kondisiLama  = $barang->kondisi;
+        $ruanganLama  = $barang->id_ruangan;
+        $fotoLama     = $barang->foto;
 
         $data = $request->except('foto');
         $data['harga_satuan'] = $request->input('harga_satuan', 0);
 
+        // Proses upload foto baru
+        $fotoBaruPath = null;
+        $fotoChanged  = false;
+
         if ($request->hasFile('foto')) {
-            if ($barang->foto && Storage::disk('public')->exists($barang->foto)) {
-                Storage::disk('public')->delete($barang->foto);
+            // Hapus foto lama dari storage
+            if ($fotoLama && Storage::disk('public')->exists($fotoLama)) {
+                Storage::disk('public')->delete($fotoLama);
             }
 
-            $foto     = $request->file('foto');
-            $namaFoto = time() . '_' . $foto->getClientOriginalName();
-            $path     = $foto->storeAs('barang', $namaFoto, 'public');
-            $data['foto'] = $path;
+            $foto         = $request->file('foto');
+            $namaFoto     = time() . '_' . $foto->getClientOriginalName();
+            $fotoBaruPath = $foto->storeAs('barang', $namaFoto, 'public');
+            $data['foto'] = $fotoBaruPath;
+            $fotoChanged  = true;
         }
 
         $barang->update($data);
+
+        $updatedBy      = auth()->user()->name;
+        $kondisiChanged = $kondisiLama !== $barang->kondisi;
+        $ruanganChanged = (string) $ruanganLama !== (string) $barang->id_ruangan;
+
+        // Tentukan jenis perubahan dan catat riwayat
+        if ($kondisiChanged && $ruanganChanged) {
+            // Kondisi + Ruangan berubah bersamaan
+            RiwayatBarang::create([
+                'id_item'         => $barang->id_item,
+                'kode_barang'     => $barang->kode_barang,
+                'nama_item'       => $barang->nama_item,
+                'jenis_perubahan' => 'Semua',
+                'kondisi_lama'    => $kondisiLama,
+                'kondisi_baru'    => $barang->kondisi,
+                'id_ruangan_lama' => $ruanganLama,
+                'id_ruangan_baru' => $barang->id_ruangan,
+                'foto_lama'       => null,
+                'foto_baru'       => null,
+                'keterangan'      => 'Kondisi dan ruangan diperbarui',
+                'updated_by'      => $updatedBy,
+            ]);
+        } elseif ($kondisiChanged) {
+            // Hanya kondisi berubah
+            RiwayatBarang::create([
+                'id_item'         => $barang->id_item,
+                'kode_barang'     => $barang->kode_barang,
+                'nama_item'       => $barang->nama_item,
+                'jenis_perubahan' => 'Kondisi',
+                'kondisi_lama'    => $kondisiLama,
+                'kondisi_baru'    => $barang->kondisi,
+                'id_ruangan_lama' => $ruanganLama,
+                'id_ruangan_baru' => $barang->id_ruangan,
+                'foto_lama'       => null,
+                'foto_baru'       => null,
+                'keterangan'      => 'Kondisi barang diperbarui',
+                'updated_by'      => $updatedBy,
+            ]);
+        } elseif ($ruanganChanged) {
+            // Hanya ruangan berubah
+            RiwayatBarang::create([
+                'id_item'         => $barang->id_item,
+                'kode_barang'     => $barang->kode_barang,
+                'nama_item'       => $barang->nama_item,
+                'jenis_perubahan' => 'Ruangan',
+                'kondisi_lama'    => $kondisiLama,
+                'kondisi_baru'    => $barang->kondisi,
+                'id_ruangan_lama' => $ruanganLama,
+                'id_ruangan_baru' => $barang->id_ruangan,
+                'foto_lama'       => null,
+                'foto_baru'       => null,
+                'keterangan'      => 'Ruangan barang diperbarui',
+                'updated_by'      => $updatedBy,
+            ]);
+        }
+
+        // Catat riwayat foto (terpisah, selalu dicatat bila foto berubah)
+        if ($fotoChanged) {
+            RiwayatBarangController::catatPerubahanFoto(
+                $barang,
+                $fotoLama,
+                $fotoBaruPath,
+                $updatedBy
+            );
+        }
+
+        // Catat riwayat data umum jika tidak ada perubahan kondisi/ruangan/foto
+        // tapi field lain (nama, merk, dll) berubah
+        if (!$kondisiChanged && !$ruanganChanged && !$fotoChanged) {
+            RiwayatBarang::create([
+                'id_item'         => $barang->id_item,
+                'kode_barang'     => $barang->kode_barang,
+                'nama_item'       => $barang->nama_item,
+                'jenis_perubahan' => 'Data',
+                'kondisi_lama'    => $kondisiLama,
+                'kondisi_baru'    => $barang->kondisi,
+                'id_ruangan_lama' => $ruanganLama,
+                'id_ruangan_baru' => $barang->id_ruangan,
+                'foto_lama'       => null,
+                'foto_baru'       => null,
+                'keterangan'      => 'Data barang diperbarui',
+                'updated_by'      => $updatedBy,
+            ]);
+        }
 
         return redirect()->route('barang.index')
             ->with('success', 'Barang berhasil diupdate!');

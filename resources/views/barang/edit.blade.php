@@ -13,14 +13,15 @@
   .pg-card__footer { padding:1rem 1.4rem; border-top:1px solid #f1f5f9; background:#fafbfc; display:flex; gap:.625rem; flex-wrap:wrap; align-items:center; justify-content:space-between; }
   .pg-label { font-size:.72rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.07em; display:block; margin-bottom:.4rem; }
   .req { color:#ef4444; margin-left:.15rem; }
-  .pg-input, .pg-select {
+  .pg-input, .pg-select, .pg-textarea {
     font-family:'Times New Roman',Times,serif; font-size:.875rem; width:100%;
     padding:.55rem .9rem; border:1px solid #e2e8f0; border-radius:10px;
     background:#f8fafc; color:#334155; outline:none;
     transition:border-color .15s, box-shadow .15s;
   }
-  .pg-input:focus, .pg-select:focus { border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,.1); background:#fff; }
-  .pg-input.is-invalid, .pg-select.is-invalid { border-color:#ef4444; }
+  .pg-input:focus, .pg-select:focus, .pg-textarea:focus { border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,.1); background:#fff; }
+  .pg-input.is-invalid, .pg-select.is-invalid, .pg-textarea.is-invalid { border-color:#ef4444; }
+  .pg-textarea { resize:vertical; min-height:90px; }
   .invalid-msg { font-size:.75rem; color:#ef4444; margin-top:.3rem; }
   .field-hint { font-size:.73rem; color:#94a3b8; margin-top:.3rem; }
   .pg-btn { font-family:'Times New Roman',Times,serif; font-size:.84rem; font-weight:700; padding:.5rem 1.1rem; border-radius:9px; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:.4rem; transition:all .15s; text-decoration:none; white-space:nowrap; }
@@ -149,6 +150,16 @@
               <option value="Rusak Berat"  {{ old('kondisi', $item->kondisi) == 'Rusak Berat'  ? 'selected' : '' }}>Rusak Berat</option>
             </select>
             @error('kondisi')<div class="invalid-msg">{{ $message }}</div>@enderror
+          </div>
+
+          {{-- Deskripsi --}}
+          <div class="col-12">
+            <label class="pg-label">Deskripsi Barang</label>
+            <textarea class="pg-textarea @error('deskripsi') is-invalid @enderror"
+                      name="deskripsi"
+                      placeholder="Contoh: Laptop untuk keperluan administrasi kantor, dilengkapi RAM 8GB dan SSD 256GB...">{{ old('deskripsi', $item->deskripsi ?? '') }}</textarea>
+            @error('deskripsi')<div class="invalid-msg">{{ $message }}</div>@enderror
+            <p class="field-hint"><i class="fas fa-info-circle me-1"></i>Opsional — tuliskan spesifikasi atau keterangan tambahan barang</p>
           </div>
 
           {{-- Foto --}}

@@ -98,6 +98,19 @@
                                     </div>
                                 </div>
 
+                                <!-- Deskripsi -->
+                                <div class="col-md-12">
+                                    <div class="form-group form-group-default @error('deskripsi') has-error @enderror">
+                                        <label>Deskripsi Barang</label>
+                                        <textarea class="form-control" name="deskripsi" rows="3"
+                                                  placeholder="Contoh: Laptop untuk keperluan administrasi kantor, dilengkapi RAM 8GB dan SSD 256GB">{{ old('deskripsi') }}</textarea>
+                                        @error('deskripsi')<small class="text-danger">{{ $message }}</small>@enderror
+                                    </div>
+                                    <small class="text-muted ml-3">
+                                        <i class="fas fa-info-circle mr-1"></i>Opsional — tuliskan spesifikasi atau keterangan tambahan barang
+                                    </small>
+                                </div>
+
                             </div>
                         </div>
 
@@ -231,8 +244,13 @@
 .form-group-default:hover { border-color: #667eea; box-shadow: 0 0 0 0.2rem rgba(102,126,234,.1); }
 .form-group-default.has-error { border-color: #dc3545; }
 .form-group-default label { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: #8898aa; font-weight: 600; margin-bottom: 5px; }
-.form-group-default input, .form-group-default select { border: none; padding: 0; height: auto; font-size: 14px; font-weight: 500; }
-.form-group-default input:focus, .form-group-default select:focus { outline: none; box-shadow: none; }
+.form-group-default input,
+.form-group-default select,
+.form-group-default textarea { border: none; padding: 0; height: auto; font-size: 14px; font-weight: 500; width: 100%; background: transparent; }
+.form-group-default input:focus,
+.form-group-default select:focus,
+.form-group-default textarea:focus { outline: none; box-shadow: none; }
+.form-group-default textarea { resize: vertical; min-height: 75px; }
 #webcam { transform: scaleX(-1); }
 </style>
 @endpush

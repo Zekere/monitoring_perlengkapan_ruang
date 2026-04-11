@@ -135,6 +135,8 @@
                                         <i class="fas fa-door-open fa-2x text-info"></i>
                                     @elseif($r->jenis_perubahan == 'Semua')
                                         <i class="fas fa-sync fa-2x text-danger"></i>
+                                    @elseif($r->jenis_perubahan == 'Foto')
+                                        <i class="fas fa-image fa-2x" style="color: #6f42c1;"></i>
                                     @else
                                         <i class="fas fa-plus-circle fa-2x text-success"></i>
                                     @endif
@@ -146,6 +148,8 @@
                                         <h5 class="card-title small">
                                             @if($r->jenis_perubahan == 'Data' && !$r->kondisi_lama)
                                                 <span class="badge bg-success">BARANG BARU</span>
+                                            @elseif($r->jenis_perubahan == 'Foto')
+                                                <span class="badge" style="background-color: #6f42c1;">FOTO</span>
                                             @else
                                                 <span class="badge
                                                     @if($r->jenis_perubahan == 'Kondisi') bg-warning text-dark
@@ -196,6 +200,53 @@
                                                 </div>
                                             @endif
 
+                                            @if($r->jenis_perubahan == 'Foto')
+                                                <div class="alert alert-light mb-2">
+                                                    <strong class="small"><i class="fas fa-image"></i> Perubahan Foto:</strong><br>
+                                                    <div class="mt-2 d-flex align-items-center gap-3">
+                                                        <!-- Foto Lama -->
+                                                        <div class="text-center">
+                                                            @if($r->foto_lama)
+                                                                <img src="{{ asset('storage/' . $r->foto_lama) }}"
+                                                                     class="img-thumbnail foto-preview"
+                                                                     style="width: 80px; height: 60px; object-fit: cover; cursor: pointer;"
+                                                                     alt="Foto Lama"
+                                                                     data-foto-lama="{{ asset('storage/' . $r->foto_lama) }}"
+                                                                     data-foto-baru="{{ $r->foto_baru ? asset('storage/' . $r->foto_baru) : '' }}"
+                                                                     onclick="bukaModalFoto(this)">
+                                                            @else
+                                                                <div class="bg-light border rounded d-flex align-items-center justify-content-center"
+                                                                     style="width: 80px; height: 60px;">
+                                                                    <i class="fas fa-image fa-2x text-muted"></i>
+                                                                </div>
+                                                            @endif
+                                                            <small class="d-block text-muted mt-1" style="font-size: 0.7rem;">Sebelum</small>
+                                                        </div>
+
+                                                        <i class="fas fa-long-arrow-alt-right fa-lg text-muted"></i>
+
+                                                        <!-- Foto Baru -->
+                                                        <div class="text-center">
+                                                            @if($r->foto_baru)
+                                                                <img src="{{ asset('storage/' . $r->foto_baru) }}"
+                                                                     class="img-thumbnail foto-preview"
+                                                                     style="width: 80px; height: 60px; object-fit: cover; cursor: pointer;"
+                                                                     alt="Foto Baru"
+                                                                     data-foto-lama="{{ $r->foto_lama ? asset('storage/' . $r->foto_lama) : '' }}"
+                                                                     data-foto-baru="{{ asset('storage/' . $r->foto_baru) }}"
+                                                                     onclick="bukaModalFoto(this)">
+                                                            @else
+                                                                <div class="bg-light border rounded d-flex align-items-center justify-content-center"
+                                                                     style="width: 80px; height: 60px;">
+                                                                    <i class="fas fa-ban fa-2x text-danger"></i>
+                                                                </div>
+                                                            @endif
+                                                            <small class="d-block text-muted mt-1" style="font-size: 0.7rem;">Sesudah</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+
                                             @if($r->keterangan)
                                                 <div class="alert alert-secondary mb-0">
                                                     <i class="fas fa-sticky-note"></i>
@@ -218,6 +269,8 @@
                                         <div>
                                             @if($r->jenis_perubahan == 'Data' && !$r->kondisi_lama)
                                                 <span class="badge bg-success" style="font-size: 0.7rem;">BARANG BARU</span>
+                                            @elseif($r->jenis_perubahan == 'Foto')
+                                                <span class="badge" style="background-color: #6f42c1; font-size: 0.7rem;">FOTO</span>
                                             @else
                                                 <span class="badge
                                                     @if($r->jenis_perubahan == 'Kondisi') bg-warning text-dark
@@ -236,6 +289,8 @@
                                                 <i class="fas fa-door-open text-info"></i>
                                             @elseif($r->jenis_perubahan == 'Semua')
                                                 <i class="fas fa-sync text-danger"></i>
+                                            @elseif($r->jenis_perubahan == 'Foto')
+                                                <i class="fas fa-image" style="color: #6f42c1;"></i>
                                             @else
                                                 <i class="fas fa-plus-circle text-success"></i>
                                             @endif
@@ -282,6 +337,53 @@
                                                 <span class="badge bg-info" style="font-size: 0.7rem;">
                                                     {{ $r->ruanganBaru->nama_ruangan ?? 'Tidak ada' }}
                                                 </span>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    @if($r->jenis_perubahan == 'Foto')
+                                        <div class="mb-2 p-2 bg-light rounded">
+                                            <strong class="small d-block"><i class="fas fa-image"></i> Foto:</strong>
+                                            <div class="d-flex align-items-center gap-2 mt-1">
+                                                <!-- Foto Lama -->
+                                                <div class="text-center">
+                                                    @if($r->foto_lama)
+                                                        <img src="{{ asset('storage/' . $r->foto_lama) }}"
+                                                             class="img-thumbnail foto-preview"
+                                                             style="width: 60px; height: 45px; object-fit: cover; cursor: pointer;"
+                                                             alt="Foto Lama"
+                                                             data-foto-lama="{{ asset('storage/' . $r->foto_lama) }}"
+                                                             data-foto-baru="{{ $r->foto_baru ? asset('storage/' . $r->foto_baru) : '' }}"
+                                                             onclick="bukaModalFoto(this)">
+                                                    @else
+                                                        <div class="bg-white border rounded d-flex align-items-center justify-content-center"
+                                                             style="width: 60px; height: 45px;">
+                                                            <i class="fas fa-image text-muted"></i>
+                                                        </div>
+                                                    @endif
+                                                    <small class="d-block text-muted" style="font-size: 0.65rem;">Sebelum</small>
+                                                </div>
+
+                                                <i class="fas fa-arrow-right small text-muted"></i>
+
+                                                <!-- Foto Baru -->
+                                                <div class="text-center">
+                                                    @if($r->foto_baru)
+                                                        <img src="{{ asset('storage/' . $r->foto_baru) }}"
+                                                             class="img-thumbnail foto-preview"
+                                                             style="width: 60px; height: 45px; object-fit: cover; cursor: pointer;"
+                                                             alt="Foto Baru"
+                                                             data-foto-lama="{{ $r->foto_lama ? asset('storage/' . $r->foto_lama) : '' }}"
+                                                             data-foto-baru="{{ asset('storage/' . $r->foto_baru) }}"
+                                                             onclick="bukaModalFoto(this)">
+                                                    @else
+                                                        <div class="bg-white border rounded d-flex align-items-center justify-content-center"
+                                                             style="width: 60px; height: 45px;">
+                                                            <i class="fas fa-ban text-danger"></i>
+                                                        </div>
+                                                    @endif
+                                                    <small class="d-block text-muted" style="font-size: 0.65rem;">Sesudah</small>
+                                                </div>
                                             </div>
                                         </div>
                                     @endif
@@ -372,6 +474,8 @@
 }
 
 .gap-1 { gap: 0.25rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 1rem; }
 
 @media (max-width: 576px) {
     .img-fluid { max-height: 150px !important; }
@@ -385,5 +489,132 @@
 .border-top { border-top: 1px solid #dee2e6 !important; }
 .fa-arrow-right { font-size: 0.7rem; opacity: 0.7; }
 .bg-opacity-10 { --bs-bg-opacity: 0.1; }
+
+/* Foto thumbnail hover effect */
+.img-thumbnail[onclick] {
+    transition: opacity 0.2s, transform 0.2s;
+}
+.img-thumbnail[onclick]:hover {
+    opacity: 0.85;
+    transform: scale(1.05);
+}
+
+/* Modal Foto */
+#modalFoto .modal-dialog { max-width: 800px; }
+#modalFoto .nav-tabs .nav-link { font-size: 0.85rem; }
+#modalFoto .tab-pane img { max-height: 420px; object-fit: contain; }
+#modalFoto .foto-kosong {
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #adb5bd;
+}
 </style>
+
+<!-- Modal Preview Foto -->
+<div class="modal fade" id="modalFoto" tabindex="-1" aria-labelledby="modalFotoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header py-2 px-3">
+                <h6 class="modal-title" id="modalFotoLabel">
+                    <i class="fas fa-image me-1"></i> Perbandingan Foto
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body p-3">
+                <!-- Tab Navigation -->
+                <ul class="nav nav-tabs mb-3" id="fotoTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="tab-sebelum" data-bs-toggle="tab"
+                                data-bs-target="#panel-sebelum" type="button" role="tab">
+                            <i class="fas fa-image me-1"></i> Sebelum
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="tab-sesudah" data-bs-toggle="tab"
+                                data-bs-target="#panel-sesudah" type="button" role="tab">
+                            <i class="fas fa-image me-1"></i> Sesudah
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content" id="fotoTabContent">
+                    <!-- Panel Sebelum -->
+                    <div class="tab-pane fade show active" id="panel-sebelum" role="tabpanel">
+                        <div id="wrap-sebelum" class="text-center"></div>
+                    </div>
+                    <!-- Panel Sesudah -->
+                    <div class="tab-pane fade" id="panel-sesudah" role="tabpanel">
+                        <div id="wrap-sesudah" class="text-center"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer py-2 px-3 justify-content-between">
+                <div id="modal-keterangan" class="text-muted small"></div>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                    <i class="fas fa-arrow-left me-1"></i> Kembali
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+function bukaModalFoto(el) {
+    const fotoLama = el.dataset.fotoLama;
+    const fotoBaru = el.dataset.fotoBaru;
+
+    // Render panel Sebelum
+    const wrapSebelum = document.getElementById('wrap-sebelum');
+    if (fotoLama) {
+        wrapSebelum.innerHTML = `
+            <img src="${fotoLama}" class="img-fluid rounded shadow-sm" style="max-height:420px; object-fit:contain;">
+            <p class="small text-muted mt-2 mb-0">Foto sebelum diubah</p>`;
+    } else {
+        wrapSebelum.innerHTML = `
+            <div class="foto-kosong">
+                <i class="fas fa-image fa-3x mb-2"></i>
+                <span class="small">Belum ada foto sebelumnya</span>
+            </div>`;
+    }
+
+    // Render panel Sesudah
+    const wrapSesudah = document.getElementById('wrap-sesudah');
+    if (fotoBaru) {
+        wrapSesudah.innerHTML = `
+            <img src="${fotoBaru}" class="img-fluid rounded shadow-sm" style="max-height:420px; object-fit:contain;">
+            <p class="small text-muted mt-2 mb-0">Foto setelah diubah</p>`;
+    } else {
+        wrapSesudah.innerHTML = `
+            <div class="foto-kosong">
+                <i class="fas fa-ban fa-3x mb-2 text-danger"></i>
+                <span class="small">Foto dihapus</span>
+            </div>`;
+    }
+
+    // Keterangan footer
+    const keterangan = document.getElementById('modal-keterangan');
+    if (fotoLama && fotoBaru) {
+        keterangan.innerHTML = '<i class="fas fa-exchange-alt me-1"></i> Foto lama diganti dengan foto baru';
+    } else if (!fotoLama && fotoBaru) {
+        keterangan.innerHTML = '<i class="fas fa-plus-circle me-1 text-success"></i> Foto baru ditambahkan';
+    } else {
+        keterangan.innerHTML = '<i class="fas fa-trash me-1 text-danger"></i> Foto dihapus';
+    }
+
+    // Reset ke tab Sebelum, lalu buka modal
+    const tabSebelum = document.getElementById('tab-sebelum');
+    bootstrap.Tab.getOrCreateInstance(tabSebelum).show();
+
+    const modal = new bootstrap.Modal(document.getElementById('modalFoto'));
+    modal.show();
+}
+</script>
+@endpush
 @endpush

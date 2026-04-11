@@ -11,8 +11,8 @@ class RiwayatBarang extends Model
 
     protected $table = 'riwayat_barang';
     protected $primaryKey = 'id_riwayat';
-    public $incrementing = true; // PENTING: pastikan ini true
-    protected $keyType = 'int';  // PENTING: tipe primary key
+    public $incrementing = true;
+    protected $keyType = 'int';
 
     protected $fillable = [
         'id_item',
@@ -20,11 +20,13 @@ class RiwayatBarang extends Model
         'nama_item',
         'kondisi_lama',
         'kondisi_baru',
-        'id_ruangan_lama',   // SUDAH ADA di database
-        'id_ruangan_baru',   // SUDAH ADA di database
+        'id_ruangan_lama',
+        'id_ruangan_baru',
         'jenis_perubahan',
+        'foto_lama',         // ← TAMBAHAN
+        'foto_baru',         // ← TAMBAHAN
         'keterangan',
-        'updated_by'
+        'updated_by',
     ];
 
     protected $casts = [
@@ -66,17 +68,21 @@ class RiwayatBarang extends Model
     public function getFormattedPerubahan()
     {
         $perubahan = [];
-        
+
         if ($this->kondisi_lama !== $this->kondisi_baru) {
             $perubahan[] = "Kondisi: {$this->kondisi_lama} → {$this->kondisi_baru}";
         }
-        
+
         if ($this->id_ruangan_lama !== $this->id_ruangan_baru) {
             $ruanganLama = $this->ruanganLama ? $this->ruanganLama->nama_ruangan : 'Tidak ada';
             $ruanganBaru = $this->ruanganBaru ? $this->ruanganBaru->nama_ruangan : 'Tidak ada';
             $perubahan[] = "Ruangan: {$ruanganLama} → {$ruanganBaru}";
         }
-        
+
+        if ($this->jenis_perubahan === 'Foto') {
+            $perubahan[] = "Foto barang diperbarui";
+        }
+
         return implode(' | ', $perubahan);
     }
 }
