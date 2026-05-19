@@ -128,9 +128,10 @@ class BarangController extends Controller
         ]);
 
         // Simpan nilai lama sebelum diupdate
-        $kondisiLama  = $barang->kondisi;
-        $ruanganLama  = $barang->id_ruangan;
-        $fotoLama     = $barang->foto;
+        $kondisiLama     = $barang->kondisi;
+        $ruanganLama     = $barang->id_ruangan;
+        $fotoLama        = $barang->foto;
+        $fotoLamaSalinan = $fotoLama; // path yang dicatat ke riwayat
 
         $data = $request->except('foto');
         $data['harga_satuan'] = $request->input('harga_satuan', 0);
@@ -140,8 +141,22 @@ class BarangController extends Controller
         $fotoChanged  = false;
 
         if ($request->hasFile('foto')) {
-            // Hapus foto lama dari storage
+            // ── SALIN foto lama ke folder riwayat SEBELUM dihapus ──
+            // Agar riwayat tetap bisa menampilkan foto sebelumnya
             if ($fotoLama && Storage::disk('public')->exists($fotoLama)) {
+                $namaFile    = basename($fotoLama);
+                $pathSalinan = 'riwayat/' . time() . '_' . $namaFile;
+
+                // Buat folder riwayat jika belum ada
+                Storage::disk('public')->makeDirectory('riwayat');
+
+                // Salin file lama ke folder riwayat
+                Storage::disk('public')->copy($fotoLama, $pathSalinan);
+
+                // Simpan path salinan untuk dicatat di riwayat
+                $fotoLamaSalinan = $pathSalinan;
+
+                // Hapus foto lama dari folder barang
                 Storage::disk('public')->delete($fotoLama);
             }
 
@@ -160,7 +175,6 @@ class BarangController extends Controller
 
         // Tentukan jenis perubahan dan catat riwayat
         if ($kondisiChanged && $ruanganChanged) {
-            // Kondisi + Ruangan berubah bersamaan
             RiwayatBarang::create([
                 'id_item'         => $barang->id_item,
                 'kode_barang'     => $barang->kode_barang,
@@ -176,7 +190,6 @@ class BarangController extends Controller
                 'updated_by'      => $updatedBy,
             ]);
         } elseif ($kondisiChanged) {
-            // Hanya kondisi berubah
             RiwayatBarang::create([
                 'id_item'         => $barang->id_item,
                 'kode_barang'     => $barang->kode_barang,
@@ -192,7 +205,6 @@ class BarangController extends Controller
                 'updated_by'      => $updatedBy,
             ]);
         } elseif ($ruanganChanged) {
-            // Hanya ruangan berubah
             RiwayatBarang::create([
                 'id_item'         => $barang->id_item,
                 'kode_barang'     => $barang->kode_barang,
@@ -209,18 +221,17 @@ class BarangController extends Controller
             ]);
         }
 
-        // Catat riwayat foto (terpisah, selalu dicatat bila foto berubah)
+        // Catat riwayat foto — gunakan $fotoLamaSalinan (path salinan di folder riwayat)
         if ($fotoChanged) {
             RiwayatBarangController::catatPerubahanFoto(
                 $barang,
-                $fotoLama,
+                $fotoLamaSalinan, // ← path salinan, bukan path asli yang sudah dihapus
                 $fotoBaruPath,
                 $updatedBy
             );
         }
 
         // Catat riwayat data umum jika tidak ada perubahan kondisi/ruangan/foto
-        // tapi field lain (nama, merk, dll) berubah
         if (!$kondisiChanged && !$ruanganChanged && !$fotoChanged) {
             RiwayatBarang::create([
                 'id_item'         => $barang->id_item,

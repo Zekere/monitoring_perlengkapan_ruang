@@ -623,7 +623,7 @@
       justify-content: center;
       gap: 6px;
       margin-top: 16px;
-      color: rgba(255,255,255,.75);
+      color: rgba(36, 55, 228, 0.75);
       text-decoration: none;
       font-size: 13px;
       font-weight: 500;

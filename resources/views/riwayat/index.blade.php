@@ -67,10 +67,6 @@
 
                         <div class="row mt-2">
                             <div class="col-12">
-                                <a href="{{ route('riwayat.export.pdf', request()->all()) }}"
-                                   class="btn btn-danger btn-sm" target="_blank">
-                                    <i class="fas fa-file-pdf"></i> Export PDF
-                                </a>
                             </div>
                         </div>
                     </form>

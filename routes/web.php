@@ -204,5 +204,5 @@ Route::middleware('auth')->group(function () {
     // Export Riwayat Perawatan
     Route::get('/export/riwayat-perawatan', [PdfExportController::class, 'exportRiwayatPerawatan'])
         ->name('export.riwayat-perawatan');
-    
+
 });

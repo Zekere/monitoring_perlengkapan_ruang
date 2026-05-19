@@ -297,34 +297,20 @@
     </div>
     @endif
 
-    {{-- ── TANDA TANGAN ── --}}
-    <div style="page-break-inside:avoid;">
-        <table class="ttd-table">
-            <tr>
-                <td>
-                    <div class="ttd-title">Mengetahui,</div>
-                    <div class="ttd-title">Kepala Bagian Perlengkapan</div>
-                    <div class="ttd-space"></div>
-                    <div class="ttd-line">( _________________________ )</div>
-                    <div class="ttd-nip">NIP. ___________________</div>
-                </td>
-                <td>
-                    <div class="ttd-title">Diperiksa,</div>
-                    <div class="ttd-title">Kepala Sub Bagian</div>
-                    <div class="ttd-space"></div>
-                    <div class="ttd-line">( _________________________ )</div>
-                    <div class="ttd-nip">NIP. ___________________</div>
-                </td>
-                <td>
-                    <div class="ttd-title">Semarang, {{ $date }}</div>
-                    <div class="ttd-title">Penanggung Jawab</div>
-                    <div class="ttd-space"></div>
-                    <div class="ttd-line">( _________________________ )</div>
-                    <div class="ttd-nip">NIP. ___________________</div>
-                </td>
-            </tr>
-        </table>
-    </div>
+ {{-- ── TANDA TANGAN ── --}}
+<div style="page-break-inside:avoid; margin-top: 40px;">
+    <table style="width:100%;">
+        <tr>
+            <td style="width:60%;"></td>
+            <td style="width:40%; text-align:center;">
+                <div style="margin-bottom: 4px;">Semarang, {{ $date }}</div>
+                <div style="margin-bottom: 70px;">Mengetahui,</div>
+                <div style="margin-bottom: 4px;">( _________________________ )</div>
+                <div>NIP. ___________________</div>
+            </td>
+        </tr>
+    </table>
+</div>
 
     {{-- ── FOOTER ── --}}
     <div class="footer">

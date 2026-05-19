@@ -178,41 +178,49 @@ class PdfExportController extends Controller
     /**
      * Export Riwayat Perawatan ke PDF
      */
-    public function exportRiwayatPerawatan(Request $request)
-    {
-        $query = RiwayatPerawatan::with(['item.kategori', 'item.ruangan']);
-        
-        // Filter berdasarkan jenis perawatan jika ada
-        if ($request->has('jenis_perawatan') && $request->jenis_perawatan != '') {
-            $query->where('jenis_perawatan', $request->jenis_perawatan);
-        }
-        
-        // Filter berdasarkan status jika ada
-        if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
-        }
-        
-        // Filter berdasarkan tanggal jika ada
-        if ($request->has('start_date') && $request->has('end_date')) {
-            $query->whereBetween('tanggal_perawatan', [$request->start_date, $request->end_date]);
-        }
-        
-        // Filter berdasarkan item jika ada
-        if ($request->has('id_item') && $request->id_item != '') {
-            $query->where('id_item', $request->id_item);
-        }
-        
-        $riwayatPerawatan = $query->orderBy('tanggal_perawatan', 'desc')->get();
-        
-        $pdf = Pdf::loadView('pdf.riwayat-perawatan', [
-            'riwayatPerawatan' => $riwayatPerawatan,
-            'title' => 'Laporan Riwayat Perawatan',
-            'date' => now()->format('d F Y'),
-            'filter' => $request->all()
-        ]);
-        
-        $pdf->setPaper('a4', 'landscape');
-        
-        return $pdf->download('laporan-riwayat-perawatan-' . date('Y-m-d') . '.pdf');
+   public function exportRiwayatPerawatan(Request $request)
+{
+    // Gunakan bulan & tahun dari request, default ke bulan/tahun berjalan
+    $bulan = (int) $request->get('bulan', date('n'));
+    $tahun = (int) $request->get('tahun', date('Y'));
+
+    $query = RiwayatPerawatan::with(['item.kategori', 'item.ruangan'])
+        ->whereMonth('tanggal_perawatan', $bulan)
+        ->whereYear('tanggal_perawatan', $tahun);
+
+    // Filter opsional tambahan
+    if ($request->filled('jenis_perawatan')) {
+        $query->where('jenis_perawatan', $request->jenis_perawatan);
     }
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+    if ($request->filled('id_item')) {
+        $query->where('id_item', $request->id_item);
+    }
+
+    $riwayatPerawatan = $query->orderBy('tanggal_perawatan', 'desc')->get();
+
+    $namaBulan = [
+        1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',
+        5=>'Mei',6=>'Juni',7=>'Juli',8=>'Agustus',
+        9=>'September',10=>'Oktober',11=>'November',12=>'Desember'
+    ];
+
+    $pdf = Pdf::loadView('pdf.riwayat-perawatan', [
+        'riwayatPerawatan' => $riwayatPerawatan,
+        'title'            => 'Laporan Riwayat Perawatan',
+        'date'             => now()->format('d F Y'),
+        'filter'           => $request->all(),
+        'bulan'            => $bulan,
+        'tahun'            => $tahun,
+        'namaBulan'        => $namaBulan[$bulan],
+    ]);
+
+    $pdf->setPaper('a4', 'landscape');
+
+    return $pdf->download(
+        'laporan-riwayat-perawatan-' . $namaBulan[$bulan] . '-' . $tahun . '.pdf'
+    );
+}
 }

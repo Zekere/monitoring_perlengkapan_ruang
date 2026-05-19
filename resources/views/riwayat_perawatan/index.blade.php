@@ -122,7 +122,9 @@
       <p class="pg-subtitle">Histori pemeliharaan seluruh barang inventaris</p>
     </div>
     <div class="d-flex gap-2 flex-wrap">
-      <a href="{{ route('export.riwayat-perawatan') }}" target="_blank" class="pg-btn pg-btn-pdf">
+      {{-- ✅ Export PDF — menyertakan bulan & tahun aktif + filter lain yang sedang aktif --}}
+      <a href="{{ route('export.riwayat-perawatan', array_merge(request()->query(), ['bulan' => $bulan, 'tahun' => $tahun])) }}"
+         target="_blank" class="pg-btn pg-btn-pdf">
         <i class="fas fa-file-pdf"></i>
         <span class="d-none d-sm-inline">Export PDF</span>
       </a>
@@ -142,10 +144,37 @@
   </div>
   @endif
 
-    {{-- Simpan bulan & tahun di filter barang juga --}}
-    <input type="hidden" name="bulan" id="hiddenBulan" value="{{ $bulan }}">
-    <input type="hidden" name="tahun" id="hiddenTahun" value="{{ $tahun }}">
-  </form>
+  {{-- ✅ Period Filter Bar — pilih bulan & tahun --}}
+  <div class="period-bar anim">
+    <i class="fas fa-calendar-alt" style="color:#6366f1;font-size:.9rem"></i>
+    <span style="font-size:.82rem;font-weight:600;color:#64748b">Periode:</span>
+    <form method="GET" action="{{ route('riwayat-perawatan.index') }}" id="periodForm"
+          style="display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin:0">
+      <select name="bulan" class="period-select" onchange="document.getElementById('periodForm').submit()">
+        @foreach($namaBulanFull as $num => $nama)
+        <option value="{{ $num }}" {{ $bulan == $num ? 'selected' : '' }}>{{ $nama }}</option>
+        @endforeach
+      </select>
+      <select name="tahun" class="period-select" onchange="document.getElementById('periodForm').submit()">
+        @foreach($daftarTahun as $thn)
+        <option value="{{ $thn }}" {{ $tahun == $thn ? 'selected' : '' }}>{{ $thn }}</option>
+        @endforeach
+      </select>
+      {{-- Pertahankan filter barang/status/jenis saat ganti periode --}}
+      @if(request('id_item'))
+        <input type="hidden" name="id_item" value="{{ request('id_item') }}">
+      @endif
+      @if(request('status'))
+        <input type="hidden" name="status" value="{{ request('status') }}">
+      @endif
+      @if(request('jenis_perawatan'))
+        <input type="hidden" name="jenis_perawatan" value="{{ request('jenis_perawatan') }}">
+      @endif
+    </form>
+    <span style="font-size:.78rem;color:#94a3b8;margin-left:auto">
+      Menampilkan data bulan <strong style="color:#334155">{{ $namaBulanFull[$bulan] }} {{ $tahun }}</strong>
+    </span>
+  </div>
 
   {{-- Stats — dihitung dari data bulan yang dipilih --}}
   <div class="stat-grid">
