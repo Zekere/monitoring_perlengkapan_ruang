@@ -18,6 +18,34 @@ use App\Http\Controllers\UserManagementController;
 
 /*
 |--------------------------------------------------------------------------
+| FIX STORAGE SYMLINK - Akses sekali lalu hapus route ini
+| URL: https://domainanda.com/fix-storage
+|--------------------------------------------------------------------------
+*/
+Route::get('/fix-storage', function () {
+    $target = storage_path('app/public');
+    $link   = public_path('storage');
+
+    if (is_link($link)) {
+        return '<h3 style="color:green">✅ Symlink sudah ada dan aktif.</h3><p>Hapus route ini dari web.php</p>';
+    }
+
+    if (file_exists($link) && !is_link($link)) {
+        return '<h3 style="color:orange">⚠️ Folder storage sudah ada tapi bukan symlink.</h3><p>Hapus folder public/storage secara manual lalu akses URL ini lagi.</p>';
+    }
+
+    try {
+        symlink($target, $link);
+        return '<h3 style="color:green">✅ Symlink berhasil dibuat!</h3><p>Foto sekarang bisa tampil. <strong>Segera hapus route ini dari web.php</strong></p>';
+    } catch (\Exception $e) {
+        return '<h3 style="color:red">❌ Gagal membuat symlink: ' . $e->getMessage() . '</h3>
+                <p>Coba cara manual: buat folder <code>public/storage/barang</code> lewat cPanel File Manager,
+                lalu copy semua file dari <code>storage/app/public/barang/</code> ke sana.</p>';
+    }
+});
+
+/*
+|--------------------------------------------------------------------------
 | Guest Routes (Tidak perlu login)
 |--------------------------------------------------------------------------
 */

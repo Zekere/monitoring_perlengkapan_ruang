@@ -64,13 +64,28 @@ class BarangController extends Controller
             'foto'         => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $data = $request->except('foto');
+        $data = $request->except(['foto', 'camera_photo']);
         $data['harga_satuan'] = $request->input('harga_satuan', 0);
+
+        // Cek foto dari kamera (base64) atau upload file biasa
+        $hasCameraPhoto = $request->filled('camera_photo') && str_starts_with($request->camera_photo, 'data:image');
 
         if ($request->hasFile('foto')) {
             $foto     = $request->file('foto');
             $namaFoto = time() . '_' . $foto->getClientOriginalName();
             $path     = $foto->storeAs('barang', $namaFoto, 'public');
+            $data['foto'] = $path;
+
+        } elseif ($hasCameraPhoto) {
+            // Foto dari kamera — decode base64 lalu simpan sebagai file
+            $base64Data = $request->camera_photo;
+            $base64Data = preg_replace('/^data:image\/\w+;base64,/', '', $base64Data);
+            $imageData  = base64_decode($base64Data);
+
+            Storage::disk('public')->makeDirectory('barang');
+            $namaFoto     = time() . '_camera.jpg';
+            $path         = 'barang/' . $namaFoto;
+            Storage::disk('public')->put($path, $imageData);
             $data['foto'] = $path;
         }
 
@@ -133,36 +148,47 @@ class BarangController extends Controller
         $fotoLama        = $barang->foto;
         $fotoLamaSalinan = $fotoLama; // path yang dicatat ke riwayat
 
-        $data = $request->except('foto');
+        $data = $request->except(['foto', 'camera_photo']);
         $data['harga_satuan'] = $request->input('harga_satuan', 0);
 
-        // Proses upload foto baru
+        // Cek sumber foto: upload file biasa atau kamera (base64)
+        $hasCameraPhoto = $request->filled('camera_photo') && str_starts_with($request->camera_photo, 'data:image');
+        $hasUploadFoto  = $request->hasFile('foto');
+
         $fotoBaruPath = null;
         $fotoChanged  = false;
 
-        if ($request->hasFile('foto')) {
+        if ($hasUploadFoto || $hasCameraPhoto) {
             // ── SALIN foto lama ke folder riwayat SEBELUM dihapus ──
-            // Agar riwayat tetap bisa menampilkan foto sebelumnya
             if ($fotoLama && Storage::disk('public')->exists($fotoLama)) {
                 $namaFile    = basename($fotoLama);
                 $pathSalinan = 'riwayat/' . time() . '_' . $namaFile;
 
-                // Buat folder riwayat jika belum ada
                 Storage::disk('public')->makeDirectory('riwayat');
-
-                // Salin file lama ke folder riwayat
                 Storage::disk('public')->copy($fotoLama, $pathSalinan);
 
-                // Simpan path salinan untuk dicatat di riwayat
                 $fotoLamaSalinan = $pathSalinan;
-
-                // Hapus foto lama dari folder barang
                 Storage::disk('public')->delete($fotoLama);
             }
 
-            $foto         = $request->file('foto');
-            $namaFoto     = time() . '_' . $foto->getClientOriginalName();
-            $fotoBaruPath = $foto->storeAs('barang', $namaFoto, 'public');
+            if ($hasUploadFoto) {
+                // Foto dari file upload biasa
+                $foto         = $request->file('foto');
+                $namaFoto     = time() . '_' . $foto->getClientOriginalName();
+                $fotoBaruPath = $foto->storeAs('barang', $namaFoto, 'public');
+
+            } elseif ($hasCameraPhoto) {
+                // Foto dari kamera — decode base64 lalu simpan sebagai file
+                $base64Data = $request->camera_photo;
+                $base64Data = preg_replace('/^data:image\/\w+;base64,/', '', $base64Data);
+                $imageData  = base64_decode($base64Data);
+
+                Storage::disk('public')->makeDirectory('barang');
+                $namaFoto     = time() . '_camera.jpg';
+                $fotoBaruPath = 'barang/' . $namaFoto;
+                Storage::disk('public')->put($fotoBaruPath, $imageData);
+            }
+
             $data['foto'] = $fotoBaruPath;
             $fotoChanged  = true;
         }
@@ -221,11 +247,11 @@ class BarangController extends Controller
             ]);
         }
 
-        // Catat riwayat foto — gunakan $fotoLamaSalinan (path salinan di folder riwayat)
+        // Catat riwayat foto
         if ($fotoChanged) {
             RiwayatBarangController::catatPerubahanFoto(
                 $barang,
-                $fotoLamaSalinan, // ← path salinan, bukan path asli yang sudah dihapus
+                $fotoLamaSalinan,
                 $fotoBaruPath,
                 $updatedBy
             );

@@ -268,62 +268,110 @@ function previewImage(e) {
 }
 
 function openCamera() {
-  new bootstrap.Modal(document.getElementById('cameraModal')).show();
-  navigator.mediaDevices.getUserMedia({ video: { facingMode:'environment', width:{ideal:1280}, height:{ideal:720} } })
+  // 1. Cek HTTPS
+  if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+    alert('Fitur kamera membutuhkan koneksi HTTPS.\nSilakan hubungi administrator untuk mengaktifkan SSL pada server.');
+    return;
+  }
+
+  // 2. Cek dukungan browser
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert('Browser Anda tidak mendukung akses kamera.\nCoba gunakan Chrome atau Firefox versi terbaru.');
+    return;
+  }
+
+  const modal = new bootstrap.Modal(document.getElementById('cameraModal'));
+  modal.show();
+
+  // Reset tampilan modal
+  document.getElementById('captureBtn').style.display    = 'inline-flex';
+  document.getElementById('retakeBtn').style.display     = 'none';
+  document.getElementById('usePhotoBtn').style.display   = 'none';
+  document.getElementById('video').style.display         = 'block';
+  document.getElementById('capturedImageContainer').style.display = 'none';
+
+  // Constraints dengan fallback
+  const constraints = {
+    video: {
+      facingMode: { ideal: 'environment' },
+      width:  { ideal: 1280 },
+      height: { ideal: 720 }
+    }
+  };
+
+  navigator.mediaDevices.getUserMedia(constraints)
+    .catch(() => {
+      // Fallback: coba tanpa preferensi facingMode
+      return navigator.mediaDevices.getUserMedia({ video: true });
+    })
     .then(stream => {
       videoStream = stream;
       const v = document.getElementById('video');
-      v.srcObject = stream; v.play();
-      document.getElementById('captureBtn').style.display = 'inline-flex';
-      document.getElementById('retakeBtn').style.display = 'none';
-      document.getElementById('usePhotoBtn').style.display = 'none';
-      document.getElementById('video').style.display = 'block';
-      document.getElementById('capturedImageContainer').style.display = 'none';
+      v.srcObject = stream;
+      v.play();
     })
-    .catch(() => alert('Tidak dapat mengakses kamera.'));
+    .catch(err => {
+      let msg = 'Tidak dapat mengakses kamera.';
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        msg = 'Izin kamera ditolak.\nSilakan izinkan akses kamera di pengaturan browser Anda, lalu coba lagi.';
+      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+        msg = 'Kamera tidak ditemukan pada perangkat ini.';
+      } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+        msg = 'Kamera sedang digunakan oleh aplikasi lain. Tutup aplikasi tersebut lalu coba lagi.';
+      } else if (err.name === 'OverconstrainedError') {
+        msg = 'Kamera tidak memenuhi persyaratan. Coba gunakan perangkat lain.';
+      }
+      bootstrap.Modal.getInstance(document.getElementById('cameraModal')).hide();
+      alert(msg);
+    });
 }
 
 function capturePhoto() {
   const v = document.getElementById('video'), c = document.getElementById('canvas');
-  c.width = v.videoWidth; c.height = v.videoHeight;
+  c.width  = v.videoWidth;
+  c.height = v.videoHeight;
   c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
   capturedPhotoData = c.toDataURL('image/jpeg', 0.9);
+
   document.getElementById('capturedImage').src = capturedPhotoData;
-  document.getElementById('video').style.display = 'none';
+  document.getElementById('video').style.display              = 'none';
   document.getElementById('capturedImageContainer').style.display = 'block';
-  document.getElementById('captureBtn').style.display = 'none';
-  document.getElementById('retakeBtn').style.display = 'inline-flex';
-  document.getElementById('usePhotoBtn').style.display = 'inline-flex';
+  document.getElementById('captureBtn').style.display         = 'none';
+  document.getElementById('retakeBtn').style.display          = 'inline-flex';
+  document.getElementById('usePhotoBtn').style.display        = 'inline-flex';
 }
 
 function retakePhoto() {
   capturedPhotoData = null;
-  document.getElementById('video').style.display = 'block';
+  document.getElementById('video').style.display              = 'block';
   document.getElementById('capturedImageContainer').style.display = 'none';
-  document.getElementById('captureBtn').style.display = 'inline-flex';
-  document.getElementById('retakeBtn').style.display = 'none';
-  document.getElementById('usePhotoBtn').style.display = 'none';
+  document.getElementById('captureBtn').style.display         = 'inline-flex';
+  document.getElementById('retakeBtn').style.display          = 'none';
+  document.getElementById('usePhotoBtn').style.display        = 'none';
 }
 
 function usePhoto() {
   if (!capturedPhotoData) return;
-  document.getElementById('preview').src = capturedPhotoData;
+  document.getElementById('preview').src             = capturedPhotoData;
   document.getElementById('imagePreview').style.display = 'block';
-  document.getElementById('camera_photo').value = capturedPhotoData;
-  document.getElementById('foto').value = '';
+  document.getElementById('camera_photo').value      = capturedPhotoData;
+  document.getElementById('foto').value              = '';
   stopCamera();
   bootstrap.Modal.getInstance(document.getElementById('cameraModal')).hide();
 }
 
 function stopCamera() {
-  if (videoStream) { videoStream.getTracks().forEach(t => t.stop()); videoStream = null; }
+  if (videoStream) {
+    videoStream.getTracks().forEach(t => t.stop());
+    videoStream = null;
+  }
 }
 
 function clearPhoto() {
-  document.getElementById('preview').src = '';
+  document.getElementById('preview').src             = '';
   document.getElementById('imagePreview').style.display = 'none';
-  document.getElementById('foto').value = '';
-  document.getElementById('camera_photo').value = '';
+  document.getElementById('foto').value              = '';
+  document.getElementById('camera_photo').value      = '';
   capturedPhotoData = null;
 }
 
